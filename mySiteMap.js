@@ -67,23 +67,78 @@ SalesforceInteractions.init({
                 }),
                 //TAGS
                 SalesforceInteractions.listener("click", `#main-menu li a span`, (e) => {
-                    console.log(e.target.innerText)
-                    SalesforceInteractions.sendEvent({
-                        interaction: {
-                            name: e.target.innerText + dateTime,
-                        },
-                    });
+
+                    switch (e.target.innerText) {
+                        case "EDICIÓN IMPRESA":
+                            console.log(e.target.innerText)
+                            SalesforceInteractions.sendEvent({
+                                interaction: {
+                                    name: e.target.innerText + dateTime,
+                                },
+                            });
+                            break;
+                        case "DÓLAR":
+                            console.log(e.target.innerText)
+                            SalesforceInteractions.sendEvent({
+                                interaction: {
+                                    name: e.target.innerText + dateTime,
+                                },
+                            });
+                            break;
+                        case "DÓLAR BLUE":
+                            console.log(e.target.innerText)
+                            SalesforceInteractions.sendEvent({
+                                interaction: {
+                                    name: e.target.innerText + dateTime,
+                                },
+                            });
+                            break;
+                        case "QUIÉN ES QUIÉN":
+                            console.log(e.target.innerText)
+                            SalesforceInteractions.sendEvent({
+                                interaction: {
+                                    name: e.target.innerText + dateTime,
+                                },
+                            });
+                            break;
+                    }
+
                 }),
                 //Tickers
                 SalesforceInteractions.listener("click", `#market-scrll-1 li a span`, (e) => {
                     console.log(e.target.innerText)
-                    SalesforceInteractions.sendEvent({
-                        interaction: {
-                            name: e.target.innerText + dateTime,
-                        },
-                    });
-                }),
+                    switch (e.target.innerText) {
+                        case "DÓLAR BLUE":
+                            SalesforceInteractions.sendEvent({
+                                interaction: {
+                                    name: e.target.innerText + dateTime,
+                                },
+                            });
+                            break;
+                        case "DÓLAR BNA":
+                            SalesforceInteractions.sendEvent({
+                                interaction: {
+                                    name: e.target.innerText + dateTime,
+                                },
+                            });
+                            break;
+                        case "DÓLAR MEP":
+                            SalesforceInteractions.sendEvent({
+                                interaction: {
+                                    name: e.target.innerText + dateTime,
+                                },
+                            });
+                            break;
+                        case "DÓLAR TARJETA":
+                            SalesforceInteractions.sendEvent({
+                                interaction: {
+                                    name: e.target.innerText + dateTime,
+                                },
+                            });
+                            break;
+                    }
 
+                }),
             ]
         },
         pageTypeDefault: {
