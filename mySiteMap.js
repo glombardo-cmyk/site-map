@@ -10,66 +10,6 @@ SalesforceInteractions.init({
     const userName = vsm.session.title;
     const isSuscriber = site.session.isSuscriber() ? "Suscriptor" : "Usuario";
 
-    //TAGS
-    let edicionImpresaTag = "";
-    let dolarTag = "";
-    let dolarBlueTag = "";
-    let quienEsQuienTag = "";
-    document.querySelectorAll("#main-menu li").forEach(card => {
-        const text = card.querySelector("a span").innerText;
-        switch (text) {
-            case "EDICIÓN IMPRESA":
-                edicionImpresaTag = card.querySelector("a span");
-                break;
-            case "DÓLAR":
-                dolarTag = card.querySelector("a span");
-                break;
-            case "DÓLAR BLUE":
-                dolarBlueTag = card.querySelector("a span");
-                break;
-            case "QUIÉN ES QUIÉN":
-                quienEsQuienTag = card.querySelector("a span");
-                break;
-        }
-    });
-    let subMenuEdicionImpresaTag = "";
-    let subMenuQuienEsQuienTag = "";
-    document.querySelectorAll("#more-list li").forEach(card => {
-        const text = card.querySelector("a span").innerText;
-        console.log(text)
-        switch (text) {
-            case "EDICIÓN IMPRESA":
-                subMenuEdicionImpresaTag = card.querySelector("a span");
-                break;
-            case "QUIÉN ES QUIÉN":
-                subMenuQuienEsQuienTag = card.querySelector("a span");
-                break;
-        }
-    });
-
-    //Tickers
-    let dolarBlueTicker = "";
-    let dolarBnaTicker = "";
-    let dolarMepTicker = "";
-    let dolarTarjetaTicker = "";
-    document.querySelectorAll("#market-scrll-1 li").forEach(card => {
-        const text = card.querySelector("a span").innerText;
-        switch (text) {
-            case "DÓLAR BLUE":
-                dolarBlueTicker = card.querySelector("a span");
-                break;
-            case "DÓLAR BNA":
-                dolarBnaTicker = card.querySelector("a span");
-                break;
-            case "DÓLAR MEP":
-                dolarMepTicker = card.querySelector("a span");
-                break;
-            case "DÓLAR TARJETA":
-                dolarTarjetaTicker = card.querySelector("a span");
-                break;
-        }
-    });
-
     //SELECTORES DE LA HOME
     const main = document.querySelector('.main-container');
     const block = main.querySelectorAll('div.block');
@@ -125,84 +65,25 @@ SalesforceInteractions.init({
                         },
                     });
                 }),
-                //TAGS           
-                SalesforceInteractions.listener("click", `${dolarTag.tagName}`, (e) => {
-                    console.log("dolar BNA")
+                //TAGS
+                SalesforceInteractions.listener("click", `#main-menu li a span`, (e) => {
+                    console.log(e.target.innerText)
                     SalesforceInteractions.sendEvent({
                         interaction: {
-                            name: "Dólar BNA tag" + dateTime,
+                            name: e.target.innerText + dateTime,
                         },
                     });
                 }),
-                SalesforceInteractions.listener("click", `${dolarBlueTag.tagName}`, (e) => {
-                    console.log("dolar blue")
+                //Tickers
+                SalesforceInteractions.listener("click", `#market-scrll-1 li a span`, (e) => {
+                    console.log(e.target.innerText)
                     SalesforceInteractions.sendEvent({
                         interaction: {
-                            name: "Dólar blue tag" + dateTime,
+                            name: e.target.innerText + dateTime,
                         },
                     });
                 }),
-                SalesforceInteractions.listener("click", `${edicionImpresaTag.tagName}`, (e) => {
-                    console.log("edicionImpresaTag")
-                    SalesforceInteractions.sendEvent({
-                        interaction: {
-                            name: "Edición impresa tag" + dateTime,
-                        },
-                    });
-                }),
-                SalesforceInteractions.listener("click", `${quienEsQuienTag.tagName}`, (e) => {
-                    SalesforceInteractions.sendEvent({
-                        interaction: {
-                            name: "Quien es quien tag" + dateTime,
-                        },
-                    });
-                }),
-                SalesforceInteractions.listener("click", `${subMenuEdicionImpresaTag.tagName}`, (e) => {
-                    console.log("edicionImpresaTag")
-                    SalesforceInteractions.sendEvent({
-                        interaction: {
-                            name: "Edición impresa tag" + dateTime,
-                        },
-                    });
-                }),
-                SalesforceInteractions.listener("click", `${subMenuQuienEsQuienTag.tagName}`, (e) => {
-                    SalesforceInteractions.sendEvent({
-                        interaction: {
-                            name: "Quien es quien tag" + dateTime,
-                        },
-                    });
-                }),
-                //TICKERS
-                SalesforceInteractions.listener("click", `${dolarBlueTicker.tagName}`, (e) => {
-                    console.log("dolar blue ticker")
-                    SalesforceInteractions.sendEvent({
-                        interaction: {
-                            name: "Dólar blue ticker" + dateTime,
-                        },
-                    });
-                }),
-                SalesforceInteractions.listener("click", `${dolarBnaTicker.tagName}`, (e) => {
-                    SalesforceInteractions.sendEvent({
-                        interaction: {
-                            name: "Dólar BNA ticker" + dateTime,
-                        },
-                    });
-                }),
-                SalesforceInteractions.listener("click", `${dolarMepTicker.tagName}`, (e) => {
-                    SalesforceInteractions.sendEvent({
-                        interaction: {
-                            name: "Dólar mep ticker" + dateTime,
-                        },
-                    });
-                }),
-                SalesforceInteractions.listener("click", `${dolarTarjetaTicker.tagName}`, (e) => {
-                    console.log("dolarTarjetaTicker")
-                    SalesforceInteractions.sendEvent({
-                        interaction: {
-                            name: "Dólar tarjeta ticker" + dateTime,
-                        },
-                    });
-                }),
+
             ]
         },
         pageTypeDefault: {
