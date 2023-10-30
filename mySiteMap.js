@@ -1,12 +1,18 @@
 SalesforceInteractions.init({
     cookieDomain: "cronista.com",
 }).then(() => {
-    const main = document.querySelector('.main-container');
-    const block = main.querySelectorAll('div.block');
+
+    //DATOS DE USUARIO
     const email = vsm.session.email;
     const idUser = vsm.session.id;
     const userName = vsm.session.title;
     const isSuscriber = site.session.isSuscriber() ? "Suscriptor" : "Usuario";
+    //BLOQUES DE LA HOME
+    const main = document.querySelector('.main-container');
+    const block = main.querySelectorAll('div.block');
+    const ulOptions = document.querySelector('.session-options');
+    const ItemsList = ulOptions.querySelectorAll('li');
+    const perfil = ItemsList[1].querySelector('a');
 
     const sitemapConfig = {
         global: {
@@ -136,6 +142,21 @@ SalesforceInteractions.init({
                             },
                         });
                     }),
+                    SalesforceInteractions.listener("click", `.svg-icon.menu`, (e) => {
+                        SalesforceInteractions.sendEvent({
+                            interaction: {
+                                name: "Botón menu",
+                            },
+                        });
+                    }),
+                    SalesforceInteractions.listener("click", `${perfil.tagName}`, (e) => {
+                        SalesforceInteractions.sendEvent({
+                            interaction: {
+                                name: "Botón menu",
+                            },
+                        });
+                    }),
+
                 ]
             },
         ]
