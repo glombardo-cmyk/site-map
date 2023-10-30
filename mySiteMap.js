@@ -7,7 +7,7 @@ SalesforceInteractions.init({
     const idUser = vsm.session.id;
     const userName = vsm.session.title;
     const isSuscriber = site.session.isSuscriber() ? "Suscriptor" : "Usuario";
-    console.log(block[0].className)
+
     const sitemapConfig = {
         global: {
             onActionEvent: (actionEvent) => {
@@ -16,12 +16,12 @@ SalesforceInteractions.init({
                     actionEvent.user.attributes = actionEvent.user.attributes || {};
                     actionEvent.user.identities = actionEvent.user.identities || {};
                     actionEvent.user.attributes.emailAddress = email;
-                    actionEvent.user.attributes.description = isSuscriber,
-                        actionEvent.user.attributes.URL || {};
+                    actionEvent.user.attributes.description = isSuscriber;
+                    actionEvent.user.attributes.URL || {};
                     actionEvent.user.attributes.contentZones || {};
                     actionEvent.user.attributes.id = idUser
                 }
-                console.log(actionEvent)
+
                 return actionEvent;
             },
             contentZones: [
@@ -53,10 +53,6 @@ SalesforceInteractions.init({
             {
                 name: "Home",
                 action: "Home",
-                contentZones: [
-                    { name: "Bloque1", selector: `.${block[0].className} h2.title` },
-                    { name: "Bloque2", selector: `.${block[1].className} h2.title` },
-                ],
                 isMatch: () => {
                     let url = window.location.href;
                     if (url.includes('?')) {
@@ -97,7 +93,6 @@ SalesforceInteractions.init({
                 },
                 listeners: [
                     SalesforceInteractions.listener("click", `.${block[0].className} h2.title`, (e) => {
-                        console.log(SalesforceInteractions.cashDom(e.target).text())
                         SalesforceInteractions.sendEvent({
                             interaction: {
                                 name: "Article: " + SalesforceInteractions.cashDom(e.target).text(),
@@ -128,7 +123,6 @@ SalesforceInteractions.init({
                         });
                     }),
                     SalesforceInteractions.listener("click", `.locked a`, (e) => {
-                        console.log(SalesforceInteractions.cashDom(e.target).text())
                         SalesforceInteractions.sendEvent({
                             interaction: {
                                 name: SalesforceInteractions.cashDom(e.target).text(),
@@ -136,8 +130,6 @@ SalesforceInteractions.init({
                         });
                     }),
                     SalesforceInteractions.listener("click", `.columnists .items article.item`, (e) => {
-                        console.log("testing")
-                        console.log(SalesforceInteractions.cashDom(e.target).text())
                         SalesforceInteractions.sendEvent({
                             interaction: {
                                 name: SalesforceInteractions.cashDom(e.target).text(),
