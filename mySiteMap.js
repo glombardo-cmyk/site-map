@@ -2,7 +2,7 @@ SalesforceInteractions.init({
     cookieDomain: "cronista.com",
 }).then(() => {
 
-    const urlCronista = 'https://qa.cronista.com/';
+    const enviroment = 'https://qa';
     const dateTime = " | " + new Date().toString()
     //DATOS DE USUARIO
     const email = vsm.session.email;
@@ -10,9 +10,13 @@ SalesforceInteractions.init({
     const userName = vsm.session.title;
     const isSuscriber = site.session.isSuscriber() ? "Suscriptor" : "Usuario";
 
-    //SELECTORES DE LA HOME
-    const main = document.querySelector('.main-container');
-    const block = main.querySelectorAll('div.block');
+
+    let main = ""
+    let block = ""
+    let isMatch = false;
+    let title = "";
+    let idElemento = "";
+    //SELECTORES DE LA Genericos
     const ulOptions = document.querySelector('.session-options');
     const ItemsList = ulOptions.querySelectorAll('li');
     const perfil = ItemsList[1].querySelector('a');
@@ -156,8 +160,12 @@ SalesforceInteractions.init({
                     if (url.includes('?')) {
                         url = url.slice(0, window.location.href.lastIndexOf('?'));
                     }
-                    let isMatch = (url === urlCronista ? true : false);
+                    isMatch = (url === `${enviroment}.cronista.com/` ? true : false);
 
+                    if (isMatch) {
+                        main = document.querySelector('.main-container');
+                        block = main.querySelectorAll('div.block');
+                    }
                     return isMatch;
                 },
                 onActionEvent: (actionEvent) => {
@@ -189,7 +197,7 @@ SalesforceInteractions.init({
                         url: window.location.href,
                     },
                 },
-                listeners: [
+                listeners: isMatch ? [
                     SalesforceInteractions.listener("click", `.${block[0].className} h2.title`, (e) => {
                         SalesforceInteractions.sendEvent({
                             interaction: {
@@ -208,7 +216,7 @@ SalesforceInteractions.init({
                     SalesforceInteractions.listener("click", `.${block[1].className} h2.title`, () => {
                         SalesforceInteractions.sendEvent({
                             interaction: {
-                                name: "Article: " + SalesforceInteractions.cashDom(this).text() + dateTime,
+                                name: "Article: " + SalesforceInteractions.cashDom(e.target).text() + dateTime,
                             },
                             user: {
                                 identities: {
@@ -234,7 +242,34 @@ SalesforceInteractions.init({
                             },
                         });
                     }),
-                ]
+                ] : []
+            },
+            {
+                name: "Cotizaciones",
+                isMatch: () => {
+                    let url = window.location.href;
+                    if (url.includes('?')) {
+                        url = url.slice(0, window.location.href.lastIndexOf('?'));
+                    }
+                    if (url.includes('MercadosOnline')) {
+                        isMatch = (url === `${enviroment}.cronista.com/MercadosOnline/accion.html` ? true : false);
+                    }
+                    if (isMatch) {
+                        title = document.querySelector('#page-header-container .section-header-title a');
+                    }
+
+                    return isMatch;
+                },
+                interaction: {
+                    action: "Ingresa a cotizaciones",
+                    attributes: {
+                        id: new URL(window.location.href).searchParams.get("id"),
+                        name: SalesforceInteractions.cashDom(title).text(),
+                        description: "Mercados online",
+                        email: email,
+                        url: window.location.href,
+                    },
+                },
             },
         ]
     };
