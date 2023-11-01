@@ -3,7 +3,9 @@ SalesforceInteractions.init({
 }).then(() => {
 
     const enviroment = 'https://qa';
-    const dateTime = " | " + new Date().toString()
+    let dateTime = new Date();
+    dateTime = `${dateTime.getDate()}/${dateTime.getMonth()}/${dateTime.getFullYear()} - hora ${dateTime.getHours()}:${dateTime.getMinutes()}`
+
     //DATOS DE USUARIO
     const email = vsm.session.email;
     const idUser = vsm.session.id;
@@ -15,7 +17,6 @@ SalesforceInteractions.init({
     let block = ""
     let isMatch = false;
     let title = "";
-    let idElemento = "";
     //SELECTORES DE LA Genericos
     const ulOptions = document.querySelector('.session-options');
     const ItemsList = ulOptions.querySelectorAll('li');
@@ -28,13 +29,15 @@ SalesforceInteractions.init({
                     actionEvent.user = actionEvent.user || {};
                     actionEvent.user.attributes = actionEvent.user.attributes || {};
                     actionEvent.user.identities = actionEvent.user.identities || {};
-                    actionEvent.user.attributes.emailAddress = email;
-                    actionEvent.user.attributes.description = isSuscriber;
                     actionEvent.user.attributes.URL || {};
                     actionEvent.user.attributes.contentZones || {};
-                    actionEvent.user.attributes.id = idUser
+                    actionEvent.user.attributes.emailAddress = email;
+                    actionEvent.user.attributes.isSuscription = isSuscriber;
+                    actionEvent.user.attributes.name = userName;
+                    actionEvent.user.attributes.lastName = userName;
+                    actionEvent.user.attributes.date = dateTime
+                    actionEvent.user.identities.userIdCms = idUser;
                 }
-
                 return actionEvent;
             },
             contentZones: [
@@ -58,14 +61,14 @@ SalesforceInteractions.init({
                 SalesforceInteractions.listener("click", `.svg-icon.menu`, (e) => {
                     SalesforceInteractions.sendEvent({
                         interaction: {
-                            name: "Botón menu" + dateTime,
+                            name: "Botón menu " + dateTime,
                         },
                     });
                 }),
                 SalesforceInteractions.listener("click", `${perfil.tagName}`, (e) => {
                     SalesforceInteractions.sendEvent({
                         interaction: {
-                            name: "Botón perfil" + dateTime,
+                            name: "Botón perfil " + dateTime,
                         },
                     });
                 }),
@@ -143,17 +146,17 @@ SalesforceInteractions.init({
                     }
 
                 }),
-            ]
+            ],
         },
         pageTypeDefault: {
             name: "default",
             interaction: {
-                name: "Default",
+                name: "Default " + dateTime,
             }
         },
         pageTypes: [
             {
-                name: "Home",
+                name: "Home " + dateTime,
                 action: "Home",
                 isMatch: () => {
                     let url = window.location.href;
@@ -161,21 +164,11 @@ SalesforceInteractions.init({
                         url = url.slice(0, window.location.href.lastIndexOf('?'));
                     }
                     isMatch = (url === `${enviroment}.cronista.com/` ? true : false);
-
                     if (isMatch) {
                         main = document.querySelector('.main-container');
                         block = main.querySelectorAll('div.block');
                     }
                     return isMatch;
-                },
-                onActionEvent: (actionEvent) => {
-                    if (email) {
-                        actionEvent.user = actionEvent.user || {};
-                        actionEvent.user.attributes = actionEvent.user.attributes || {};
-                        actionEvent.user.attributes.email = email;
-                        actionEvent.user.name = userName;
-                    };
-                    return actionEvent;
                 },
                 interaction: {
                     action: "Ingresa a la home",
@@ -190,9 +183,9 @@ SalesforceInteractions.init({
                         }
                     },
                     attributes: {
-                        id: idUser,
+                        userIdCms: idUser,
                         name: userName,
-                        description: isSuscriber,
+                        isSuscriber: isSuscriber,
                         email: email,
                         url: window.location.href,
                     },
@@ -216,7 +209,7 @@ SalesforceInteractions.init({
                     SalesforceInteractions.listener("click", `.${block[1].className} h2.title`, () => {
                         SalesforceInteractions.sendEvent({
                             interaction: {
-                                name: "Article: " + SalesforceInteractions.cashDom(e.target).text() + dateTime,
+                                name: "Article from home: " + SalesforceInteractions.cashDom(e.target).text() + dateTime,
                             },
                             user: {
                                 identities: {
@@ -268,6 +261,7 @@ SalesforceInteractions.init({
                         description: "Mercados online",
                         email: email,
                         url: window.location.href,
+                        date: dateTime
                     },
                 },
             },
