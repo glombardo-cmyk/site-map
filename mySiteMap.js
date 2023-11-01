@@ -16,7 +16,6 @@ SalesforceInteractions.init({
     let main = ""
     let block = ""
     let isMatch = false;
-    let title = "";
     //SELECTORES DE LA Genericos
     const ulOptions = document.querySelector('.session-options');
     const ItemsList = ulOptions.querySelectorAll('li');
@@ -61,26 +60,25 @@ SalesforceInteractions.init({
                 SalesforceInteractions.listener("click", `.svg-icon.menu`, (e) => {
                     SalesforceInteractions.sendEvent({
                         interaction: {
-                            name: "Botón menu " + dateTime,
+                            name: "Botón menu",
                         },
                     });
                 }),
                 SalesforceInteractions.listener("click", `${perfil.tagName}`, (e) => {
                     SalesforceInteractions.sendEvent({
                         interaction: {
-                            name: "Botón perfil " + dateTime,
+                            name: "Botón perfil",
                         },
                     });
                 }),
                 //TAGS
                 SalesforceInteractions.listener("click", `#main-menu li a span`, (e) => {
-
                     switch (e.target.innerText) {
                         case "EDICIÓN IMPRESA":
                             console.log(e.target.innerText)
                             SalesforceInteractions.sendEvent({
                                 interaction: {
-                                    name: e.target.innerText + dateTime,
+                                    name: e.target.innerText,
                                 },
                             });
                             break;
@@ -88,7 +86,7 @@ SalesforceInteractions.init({
                             console.log(e.target.innerText)
                             SalesforceInteractions.sendEvent({
                                 interaction: {
-                                    name: e.target.innerText + dateTime,
+                                    name: e.target.innerText,
                                 },
                             });
                             break;
@@ -96,7 +94,7 @@ SalesforceInteractions.init({
                             console.log(e.target.innerText)
                             SalesforceInteractions.sendEvent({
                                 interaction: {
-                                    name: e.target.innerText + dateTime,
+                                    name: e.target.innerText,
                                 },
                             });
                             break;
@@ -104,12 +102,11 @@ SalesforceInteractions.init({
                             console.log(e.target.innerText)
                             SalesforceInteractions.sendEvent({
                                 interaction: {
-                                    name: e.target.innerText + dateTime,
+                                    name: e.target.innerText,
                                 },
                             });
                             break;
                     }
-
                 }),
                 //Tickers
                 SalesforceInteractions.listener("click", `#market-scrll-1 li a span`, (e) => {
@@ -118,52 +115,50 @@ SalesforceInteractions.init({
                         case "DÓLAR BLUE":
                             SalesforceInteractions.sendEvent({
                                 interaction: {
-                                    name: e.target.innerText + dateTime,
+                                    name: e.target.innerText,
                                 },
                             });
                             break;
                         case "DÓLAR BNA":
                             SalesforceInteractions.sendEvent({
                                 interaction: {
-                                    name: e.target.innerText + dateTime,
+                                    name: e.target.innerText,
                                 },
                             });
                             break;
                         case "DÓLAR MEP":
                             SalesforceInteractions.sendEvent({
                                 interaction: {
-                                    name: e.target.innerText + dateTime,
+                                    name: e.target.innerText,
                                 },
                             });
                             break;
                         case "DÓLAR TARJETA":
                             SalesforceInteractions.sendEvent({
                                 interaction: {
-                                    name: e.target.innerText + dateTime,
+                                    name: e.target.innerText,
                                 },
                             });
                             break;
                     }
-
                 }),
             ],
         },
         pageTypeDefault: {
             name: "default",
             interaction: {
-                name: "Default " + dateTime,
+                name: "Default",
             }
         },
         pageTypes: [
             {
-                name: "Home " + dateTime,
-                action: "Home",
+                name: "Home",
                 isMatch: () => {
                     let url = window.location.href;
                     if (url.includes('?')) {
                         url = url.slice(0, window.location.href.lastIndexOf('?'));
                     }
-                    isMatch = (url === `${enviroment}.cronista.com/` ? true : false);
+                    isMatch = (url === `${enviroment}.cronista.com` ? true : false);
                     if (isMatch) {
                         main = document.querySelector('.main-container');
                         block = main.querySelectorAll('div.block');
@@ -209,7 +204,7 @@ SalesforceInteractions.init({
                     SalesforceInteractions.listener("click", `.${block[1].className} h2.title`, () => {
                         SalesforceInteractions.sendEvent({
                             interaction: {
-                                name: "Article from home: " + SalesforceInteractions.cashDom(e.target).text() + dateTime,
+                                name: "Article from home: " + SalesforceInteractions.cashDom(e.target).text(),
                             },
                             user: {
                                 identities: {
@@ -224,47 +219,44 @@ SalesforceInteractions.init({
                     SalesforceInteractions.listener("click", `.locked a`, (e) => {
                         SalesforceInteractions.sendEvent({
                             interaction: {
-                                name: SalesforceInteractions.cashDom(e.target).text() + dateTime,
+                                name: SalesforceInteractions.cashDom(e.target).text(),
                             },
                         });
                     }),
                     SalesforceInteractions.listener("click", `.columnists .items article.item`, (e) => {
                         SalesforceInteractions.sendEvent({
                             interaction: {
-                                name: SalesforceInteractions.cashDom(e.target).text() + dateTime,
+                                name: SalesforceInteractions.cashDom(e.target).text(),
                             },
                         });
                     }),
                 ] : []
             },
             {
-                name: "Cotizaciones",
+                name: "PayWall",
                 isMatch: () => {
                     let url = window.location.href;
+
                     if (url.includes('?')) {
                         url = url.slice(0, window.location.href.lastIndexOf('?'));
                     }
-                    if (url.includes('MercadosOnline')) {
-                        isMatch = (url === `${enviroment}.cronista.com/MercadosOnline/accion.html` ? true : false);
-                    }
-                    if (isMatch) {
-                        title = document.querySelector('#page-header-container .section-header-title a');
-                    }
+
+                    isMatch = (url === `${enviroment}.cronista.com/suscripciones/` ? true : false);
 
                     return isMatch;
                 },
-                interaction: {
-                    action: "Ingresa a cotizaciones",
-                    attributes: {
-                        id: new URL(window.location.href).searchParams.get("id"),
-                        name: SalesforceInteractions.cashDom(title).text(),
-                        description: "Mercados online",
-                        email: email,
-                        url: window.location.href,
-                        date: dateTime
-                    },
+                onActionEvent: (actionEvent) => {
+                    if (email) {
+                        let limit = new URL(window.location.href).searchParams.get("limit")
+                        let continueUrl = new URL(window.location.href).searchParams.get("continue")
+                        actionEvent.user = actionEvent.user || {};
+                        actionEvent.user.attributes = actionEvent.user.attributes || {};
+                        actionEvent.user.attributes.typeOfEntry = limit ? "choque metered" : "Choque directo";
+                        actionEvent.user.attributes.continueUrl = continueUrl;
+                    }
+                    return actionEvent;
                 },
-            },
+            }
         ]
     };
     SalesforceInteractions.initSitemap(sitemapConfig);
