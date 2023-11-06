@@ -7,15 +7,16 @@ SalesforceInteractions.init({
     dateTime = `${dateTime.getDate()}/${dateTime.getMonth()}/${dateTime.getFullYear()} - hora ${dateTime.getHours()}:${dateTime.getMinutes()}`
 
     //DATOS DE USUARIO
-    const email = vsm.session.email;
-    const idUser = vsm.session.id;
-    const userName = vsm.session.title;
-    const isSuscriber = site.session.isSuscriber() ? "Suscriptor" : "Usuario";
+    const email = vsm.session.email != "" ? vsm.session.email : "";
+    const idUser = vsm.session.id != "" ? vsm.session.id : "";
+    const userName = vsm.session.title != "" ? vsm.session.title : "";
+    const isSuscriber = site.session.isSuscriber() && site.session != undefined ? "Suscriptor" : "Usuario";
 
 
     let main = ""
     let block = ""
-    let isMatch = false;
+    let isMatch = false
+    let url = ""
     //SELECTORES DE LA Genericos
     const ulOptions = document.querySelector('.session-options');
     const ItemsList = ulOptions.querySelectorAll('li');
@@ -24,6 +25,7 @@ SalesforceInteractions.init({
     const sitemapConfig = {
         global: {
             onActionEvent: (actionEvent) => {
+                url = window.location.href
                 if (email) {
                     actionEvent.user = actionEvent.user || {};
                     actionEvent.user.attributes = actionEvent.user.attributes || {};
@@ -44,19 +46,38 @@ SalesforceInteractions.init({
                 { name: "Footer", selector: '#page-footer' },
             ],
             listeners: [
-                //MENU HEADER
-                SalesforceInteractions.listener("click", '#page-header-session-box .sign-in-button', () => {
-                    SalesforceInteractions.sendEvent({
-                        interaction: { name: SalesforceInteractions.cashDom('#page-header-session-box .sign-in-button').text(), },
-                    });
-                }),
-                SalesforceInteractions.listener("click", `#page-header-middle .b-suscription`, () => {
+                //Botón ingresá HEADER
+                SalesforceInteractions.listener("click", '#page-header-session-box .sign-in-button', (e) => {
                     SalesforceInteractions.sendEvent({
                         interaction: {
-                            name: SalesforceInteractions.cashDom(`#page-header-middle .b-suscription`).text(),
+                            name: "Botón " + SalesforceInteractions.cashDom('#page-header-session-box .sign-in-button').text(),
+                            attributes: {
+                                userIdCms: idUser,
+                                name: userName,
+                                lastName: userName,
+                                isSuscriber: isSuscriber,
+                                emailAddress: email,
+                                continueUrl: url
+                            },
                         },
                     });
                 }),
+                //Botón suscripción
+                SalesforceInteractions.listener("click", `#page-header-middle .b-suscription`, () => {
+                    SalesforceInteractions.sendEvent({
+                        interaction: {
+                            name: "Botón " + SalesforceInteractions.cashDom(`#page-header-middle .b-suscription`).text(),
+                            attributes: {
+                                name: userName,
+                                lastName: userName,
+                                isSuscriber: isSuscriber,
+                                continueUrl: url
+                            },
+                            user: { identities: { emailAddress: email, userIdCms: idUser } },
+                        },
+                    });
+                }),
+                //Menu Hamburguesa
                 SalesforceInteractions.listener("click", `.svg-icon.menu`, (e) => {
                     SalesforceInteractions.sendEvent({
                         interaction: {
@@ -64,7 +85,10 @@ SalesforceInteractions.init({
                         },
                     });
                 }),
+                //Botón perfil 
                 SalesforceInteractions.listener("click", `${perfil.tagName}`, (e) => {
+                    if (e.target.innerText == "Mi perfil")
+                        console.log(e.target.innerText)
                     SalesforceInteractions.sendEvent({
                         interaction: {
                             name: "Botón perfil",
@@ -147,15 +171,15 @@ SalesforceInteractions.init({
         pageTypeDefault: {
             name: "default",
             interaction: {
-                name: "Default",
+                name: "Default Page",
             }
         },
         pageTypes: [
             {
-                name: "Home",
+                name: "Page Home",
                 isMatch: () => {
                     let url = window.location.href;
-                    if (url.includes('?')) {
+                    if (url.includes('?') || url.includes('/')) {
                         url = url.slice(0, window.location.href.lastIndexOf('?'));
                     }
                     isMatch = (url === `${enviroment}.cronista.com` ? true : false);
@@ -163,6 +187,7 @@ SalesforceInteractions.init({
                         main = document.querySelector('.main-container');
                         block = main.querySelectorAll('div.block');
                     }
+
                     return isMatch;
                 },
                 interaction: {
@@ -174,15 +199,14 @@ SalesforceInteractions.init({
                             return "Home-UTM: " + url;
                         }
                         else {
-                            return "Home";
+                            return "Page Home";
                         }
                     },
                     attributes: {
                         userIdCms: idUser,
                         name: userName,
                         isSuscriber: isSuscriber,
-                        email: email,
-                        url: window.location.href,
+                        emailAddress: email,
                     },
                 },
                 listeners: isMatch ? [
@@ -233,9 +257,9 @@ SalesforceInteractions.init({
                 ] : []
             },
             {
-                name: "PayWall",
+                name: "Page PayWall",
                 isMatch: () => {
-                    let url = window.location.href;
+                    url = window.location.href;
 
                     if (url.includes('?')) {
                         url = url.slice(0, window.location.href.lastIndexOf('?'));
@@ -244,6 +268,17 @@ SalesforceInteractions.init({
                     isMatch = (url === `${enviroment}.cronista.com/suscripciones/` ? true : false);
 
                     return isMatch;
+                },
+                interaction: {
+                    name: "Page Pay Wall",
+                    action: "Ingresa a suscripciones",
+                    attributes: {
+                        userIdCms: idUser,
+                        name: userName,
+                        isSuscriber: isSuscriber,
+                        emailAddress: email,
+                        continueUrl: url
+                    },
                 },
                 onActionEvent: (actionEvent) => {
                     if (email) {
@@ -256,6 +291,45 @@ SalesforceInteractions.init({
                     }
                     return actionEvent;
                 },
+                listeners: [
+                    //Boton quiero suscribirme
+                    SalesforceInteractions.listener("click", `.item .button`, (e) => {
+                        const cardTitle = e.currentTarget.parentNode.querySelector('h2.title');
+                        SalesforceInteractions.sendEvent({
+                            interaction: {
+                                name: "Quiero suscribirme " + SalesforceInteractions.cashDom(cardTitle).text(),
+                            },
+                        });
+                    }),
+                    //Boton detalles
+                    SalesforceInteractions.listener("click", `.item .list_items`, (e) => {
+                        const cardTitle = e.currentTarget.parentNode.querySelector('h2.title');
+                        SalesforceInteractions.sendEvent({
+                            interaction: {
+                                name: "Detalle " + SalesforceInteractions.cashDom(cardTitle).text(),
+                            },
+                        });
+                    }),
+                    //Boton otros planes
+                    SalesforceInteractions.listener("click", `.otros-planes__item a`, (e) => {
+                        const linkTitle = e.currentTarget.parentNode.querySelector('span');
+                        SalesforceInteractions.sendEvent({
+                            interaction: {
+                                name: "Otros planes " + SalesforceInteractions.cashDom(linkTitle).text(),
+                            },
+                        });
+                    }),
+                    //Link terminos y condiciones | Precios vigentes
+                    SalesforceInteractions.listener("click", `.footer-footer a`, (e) => {
+                        const linkTitle = e.currentTarget;
+                        console.log(SalesforceInteractions.cashDom(linkTitle).text())
+                        SalesforceInteractions.sendEvent({
+                            interaction: {
+                                name: SalesforceInteractions.cashDom(linkTitle).text(),
+                            },
+                        });
+                    }),
+                ]
             }
         ]
     };
