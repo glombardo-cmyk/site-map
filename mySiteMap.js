@@ -13,14 +13,40 @@ SalesforceInteractions.init({
     const isSuscriber = site.session.isSuscriber() && site.session != undefined ? "Suscriptor" : "Usuario";
 
 
-    let main = document.querySelector('.main-container');
-    let block = main.querySelectorAll('div.block');
+
+
     let isMatch = false
     let url = ""
     //SELECTORES DE LA Genericos
     const ulOptions = document.querySelector('.session-options');
     const ItemsList = ulOptions.querySelectorAll('li');
     const perfil = ItemsList[1].querySelector('a');
+
+    function sendData(nameEvent, target, container) {
+
+        for (let i = 0; i < container.length; i++) {
+
+            if (target === container[i]) {
+                console.log(nameEvent + "Elemento" + (i + 1));
+                SalesforceInteractions.sendEvent({
+                    interaction: {
+                        name: nameEvent + " " + SalesforceInteractions.cashDom(container[i]).text(),
+                    },
+                    user: {
+                        identities: {
+                            emailAddress: email
+                        },
+                        attributes: {
+                            name: userName
+                        }
+                    }
+                });
+                break;
+            }
+
+        }
+
+    }
 
     const sitemapConfig = {
         global: {
@@ -207,37 +233,13 @@ SalesforceInteractions.init({
                     },
                 },
                 listeners: [
-                    SalesforceInteractions.listener("click", `.${block[0].className} h2.title`, (e) => {
-                        console.log(SalesforceInteractions.cashDom(e.target).text())
-                        SalesforceInteractions.sendEvent({
-                            interaction: {
-                                name: "Article: " + SalesforceInteractions.cashDom(e.target).text(),
-                            },
-                            user: {
-                                identities: {
-                                    emailAddress: email
-                                },
-                                attributes: {
-                                    name: userName
-                                }
-                            }
-                        });
-                    }),
-                    SalesforceInteractions.listener("click", `.${block[1].className} h2.title`, (e) => {
-                        console.log(SalesforceInteractions.cashDom(e.target).text())
-                        SalesforceInteractions.sendEvent({
-                            interaction: {
-                                name: "Article from home: " + SalesforceInteractions.cashDom(e.target).text(),
-                            },
-                            user: {
-                                identities: {
-                                    emailAddress: email
-                                },
-                                attributes: {
-                                    name: userName
-                                }
-                            }
-                        });
+                    SalesforceInteractions.listener("click", `.block article.item`, (e) => {
+                        let main = document.querySelector('.main-container');
+                        let blocks = main.querySelectorAll('div.block');
+                        var block1 = blocks[0].querySelectorAll('article.item');
+                        var block2 = blocks[1].querySelectorAll('article.item');
+                        sendData("Article from home (Bloque1): ", e.currentTarget, block1)
+                        sendData("Article from home (Bloque2): ", e.currentTarget, block2)
                     }),
                     SalesforceInteractions.listener("click", `.locked a`, (e) => {
                         console.log(SalesforceInteractions.cashDom(e.target).text())
