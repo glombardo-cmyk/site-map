@@ -160,41 +160,41 @@ SalesforceInteractions.init({
                     }
                 }),
                 //Tickers
-                SalesforceInteractions.listener("click", `.markets ul[data-vplscroll="1"] li a`, (e) => {
-                    switch (e.currentTarget.querySelector("span.name").innerText) {
+                SalesforceInteractions.listener("click", ".piece.markets.standard ul li", (e) => {
+                    switch (e.currentTarget.querySelector("a span.name").innerText) {
                         case "DÓLAR BLUE":
-                            console.log(SalesforceInteractions.cashDom(e.currentTarget.querySelector("span.name")).text())
+                            console.log(SalesforceInteractions.cashDom(e.currentTarget.querySelector("a span.name")).text())
 
                             SalesforceInteractions.sendEvent({
                                 interaction: {
-                                    name: "Click TICKER: " + SalesforceInteractions.cashDom(e.currentTarget.querySelector("span.name")).text(),
+                                    name: "Click TICKER: " + SalesforceInteractions.cashDom(e.currentTarget.querySelector("a span.name")).text(),
                                 },
                             });
                             break;
                         case "DÓLAR BNA":
-                            console.log(SalesforceInteractions.cashDom(e.currentTarget.querySelector("span.name")).text())
+                            console.log(SalesforceInteractions.cashDom(e.currentTarget.querySelector("a span.name")).text())
 
                             SalesforceInteractions.sendEvent({
                                 interaction: {
-                                    name: "Click TICKER: " + SalesforceInteractions.cashDom(e.currentTarget.querySelector("span.name")).text(),
+                                    name: "Click TICKER: " + SalesforceInteractions.cashDom(e.currentTarget.querySelector("a span.name")).text(),
                                 },
                             });
                             break;
                         case "DÓLAR MEP":
-                            console.log(SalesforceInteractions.cashDom(e.currentTarget.querySelector("span.name")).text())
+                            console.log(SalesforceInteractions.cashDom(e.currentTarget.querySelector("a span.name")).text())
 
                             SalesforceInteractions.sendEvent({
                                 interaction: {
-                                    name: "Click TICKER: " + SalesforceInteractions.cashDom(e.currentTarget.querySelector("span.name")).text(),
+                                    name: "Click TICKER: " + SalesforceInteractions.cashDom(e.currentTarget.querySelector("a span.name")).text(),
                                 },
                             });
                             break;
                         case "DÓLAR TARJETA":
-                            console.log(SalesforceInteractions.cashDom(e.currentTarget.querySelector("span.name")).text())
+                            console.log(SalesforceInteractions.cashDom(e.currentTarget.querySelector("a span.name")).text())
 
                             SalesforceInteractions.sendEvent({
                                 interaction: {
-                                    name: "Click TICKER: " + SalesforceInteractions.cashDom(e.currentTarget.querySelector("span.name")).text(),
+                                    name: "Click TICKER: " + SalesforceInteractions.cashDom(e.currentTarget.querySelector("a span.name")).text(),
                                 },
                             });
                             break;
@@ -253,7 +253,7 @@ SalesforceInteractions.init({
                         console.log(SalesforceInteractions.cashDom(e.currentTarget).text())
                         SalesforceInteractions.sendEvent({
                             interaction: {
-                                name: "Click, Article Member from home: " + SalesforceInteractions.cashDom(e.target).text(),
+                                name: "Click, Article Member from home: " + SalesforceInteractions.cashDom(e.currentTarget).text(),
                             },
                         });
                     }),
