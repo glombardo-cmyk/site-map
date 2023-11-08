@@ -238,21 +238,22 @@ SalesforceInteractions.init({
                         let blocks = main.querySelectorAll('div.block');
                         var block1 = blocks[0].querySelectorAll('article.item');
                         var block2 = blocks[1].querySelectorAll('article.item');
-                        sendData("Article from home (Bloque1): ", e.currentTarget, block1)
-                        sendData("Article from home (Bloque2): ", e.currentTarget, block2)
+                        sendData("Click, Article from home (Bloque1): ", e.currentTarget, block1)
+                        sendData("Click, Article from home (Bloque2): ", e.currentTarget, block2)
                     }),
-                    SalesforceInteractions.listener("click", `.locked a`, (e) => {
-                        console.log(SalesforceInteractions.cashDom(e.target).text())
+                    SalesforceInteractions.listener("click", `article.locked`, (e) => {
+                        console.log(SalesforceInteractions.cashDom(e.currentTarget).text())
                         SalesforceInteractions.sendEvent({
                             interaction: {
-                                name: "Article Member from home: " + SalesforceInteractions.cashDom(e.target).text(),
+                                name: "Click, Article Member from home: " + SalesforceInteractions.cashDom(e.target).text(),
                             },
                         });
                     }),
                     SalesforceInteractions.listener("click", `.columnists .items article.item`, (e) => {
+                        console.log(SalesforceInteractions.cashDom(e.currentTarget).text())
                         SalesforceInteractions.sendEvent({
                             interaction: {
-                                name: "Columnists: " + SalesforceInteractions.cashDom(e.target).text(),
+                                name: "Click, Columnists: " + SalesforceInteractions.cashDom(e.target).text(),
                             },
                         });
                     }),
