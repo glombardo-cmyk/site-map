@@ -27,10 +27,9 @@ SalesforceInteractions.init({
         for (let i = 0; i < container.length; i++) {
 
             if (target === container[i]) {
-                console.log(nameEvent + "Elemento: " + (i + 1));
                 SalesforceInteractions.sendEvent({
                     interaction: {
-                        name: nameEvent + " " + SalesforceInteractions.cashDom(container[i]).text(),
+                        name: nameEvent,
                     },
                     user: {
                         identities: {
@@ -111,13 +110,23 @@ SalesforceInteractions.init({
                         },
                     });
                 }),
+                //Botón desplegable perfil
+                SalesforceInteractions.listener("click", `#page-header-session-box .session`, (e) => {
+                    if (e.target.innerText != "Mi perfil" && e.target.innerText != "Cerrar sesión" && e.target.innerText != email) {
+                        SalesforceInteractions.sendEvent({
+                            interaction: {
+                                name: "Click Botón desplegable Menu perfil",
+                            },
+                        });
+                    }
+
+                }),
                 //Botón perfil 
                 SalesforceInteractions.listener("click", `${perfil.tagName}`, (e) => {
                     if (e.target.innerText == "Mi perfil") {
-                        console.log(e.target.innerText)
                         SalesforceInteractions.sendEvent({
                             interaction: {
-                                name: "Click Botón perfil",
+                                name: "Click Botón Mi perfil",
                             },
                         });
                     }
@@ -126,7 +135,6 @@ SalesforceInteractions.init({
                 SalesforceInteractions.listener("click", `#main-menu ul li a`, (e) => {
                     switch (e.currentTarget.innerText) {
                         case "EDICIÓN IMPRESA":
-                            console.log("Click TAG: " + SalesforceInteractions.cashDom(e.currentTarget).text())
                             SalesforceInteractions.sendEvent({
                                 interaction: {
                                     name: "Click TAG: " + SalesforceInteractions.cashDom(e.currentTarget).text(),
@@ -134,7 +142,6 @@ SalesforceInteractions.init({
                             });
                             break;
                         case "DÓLAR":
-                            console.log("Click TAG: " + SalesforceInteractions.cashDom(e.currentTarget).text())
                             SalesforceInteractions.sendEvent({
                                 interaction: {
                                     name: "Click TAG: " + SalesforceInteractions.cashDom(e.currentTarget).text(),
@@ -142,7 +149,6 @@ SalesforceInteractions.init({
                             });
                             break;
                         case "DÓLAR BLUE":
-                            console.log("Click TAG: " + SalesforceInteractions.cashDom(e.currentTarget).text())
                             SalesforceInteractions.sendEvent({
                                 interaction: {
                                     name: "Click TAG: " + SalesforceInteractions.cashDom(e.currentTarget).text(),
@@ -150,7 +156,6 @@ SalesforceInteractions.init({
                             });
                             break;
                         case "QUIÉN ES QUIÉN":
-                            console.log("Click TAG: " + SalesforceInteractions.cashDom(e.currentTarget).text())
                             SalesforceInteractions.sendEvent({
                                 interaction: {
                                     name: "Click TAG: " + e.target.innerText,
@@ -163,7 +168,6 @@ SalesforceInteractions.init({
                 SalesforceInteractions.listener("click", ".piece.markets.standard ul li", (e) => {
                     switch (e.currentTarget.querySelector("a span.name").innerText) {
                         case "DÓLAR BLUE":
-                            console.log(SalesforceInteractions.cashDom(e.currentTarget.querySelector("a span.name")).text())
 
                             SalesforceInteractions.sendEvent({
                                 interaction: {
@@ -172,7 +176,6 @@ SalesforceInteractions.init({
                             });
                             break;
                         case "DÓLAR BNA":
-                            console.log(SalesforceInteractions.cashDom(e.currentTarget.querySelector("a span.name")).text())
 
                             SalesforceInteractions.sendEvent({
                                 interaction: {
@@ -181,7 +184,6 @@ SalesforceInteractions.init({
                             });
                             break;
                         case "DÓLAR MEP":
-                            console.log(SalesforceInteractions.cashDom(e.currentTarget.querySelector("a span.name")).text())
 
                             SalesforceInteractions.sendEvent({
                                 interaction: {
@@ -190,8 +192,6 @@ SalesforceInteractions.init({
                             });
                             break;
                         case "DÓLAR TARJETA":
-                            console.log(SalesforceInteractions.cashDom(e.currentTarget.querySelector("a span.name")).text())
-
                             SalesforceInteractions.sendEvent({
                                 interaction: {
                                     name: "Click TICKER: " + SalesforceInteractions.cashDom(e.currentTarget.querySelector("a span.name")).text(),
@@ -246,22 +246,20 @@ SalesforceInteractions.init({
                         let blocks = main.querySelectorAll('div.block');
                         var block1 = blocks[0].querySelectorAll('article.item');
                         var block2 = blocks[1].querySelectorAll('article.item');
-                        sendData("Click, Article from home (Bloque1): ", e.currentTarget, block1)
-                        sendData("Click, Article from home (Bloque2): ", e.currentTarget, block2)
+                        sendData("Click, Article from home (Bloque1)", e.currentTarget, block1)
+                        sendData("Click, Article from home (Bloque2)", e.currentTarget, block2)
                     }),
                     SalesforceInteractions.listener("click", `article.locked`, (e) => {
-                        console.log(SalesforceInteractions.cashDom(e.currentTarget).text())
                         SalesforceInteractions.sendEvent({
                             interaction: {
-                                name: "Click, Article Member from home: " + SalesforceInteractions.cashDom(e.currentTarget).text(),
+                                name: "Click, Article Member from home",
                             },
                         });
                     }),
                     SalesforceInteractions.listener("click", `.columnists .items article.item`, (e) => {
-                        console.log(SalesforceInteractions.cashDom(e.currentTarget).text())
                         SalesforceInteractions.sendEvent({
                             interaction: {
-                                name: "Click, Columnists: " + SalesforceInteractions.cashDom(e.target).text(),
+                                name: "Click, Columnists",
                             },
                         });
                     }),
