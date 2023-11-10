@@ -12,9 +12,6 @@ SalesforceInteractions.init({
     const userName = vsm.session.title != "" ? vsm.session.title : "";
     const isSuscriber = site.session.isSuscriber() && site.session != undefined ? "Suscriptor" : "Usuario";
 
-
-
-
     let isMatch = false
     let url = ""
     //SELECTORES DE LA Genericos
@@ -25,7 +22,6 @@ SalesforceInteractions.init({
     function sendData(nameEvent, target, container) {
 
         for (let i = 0; i < container.length; i++) {
-
             if (target === container[i]) {
                 SalesforceInteractions.sendEvent({
                     interaction: {
@@ -241,11 +237,17 @@ SalesforceInteractions.init({
                     },
                 },
                 listeners: [
-                    SalesforceInteractions.listener("click", `.block article.item`, (e) => {
+                    SalesforceInteractions.listener("click", `.section article.item`, (e) => {
                         let main = document.querySelector('.main-container');
-                        let blocks = main.querySelectorAll('div.block');
-                        var block1 = blocks[0].querySelectorAll('article.item');
-                        var block2 = blocks[1].querySelectorAll('article.item');
+                        let block1 = main.childNodes[0].querySelectorAll('article.item');
+                        let block2 = main.childNodes[2].querySelectorAll('article.item')
+                        sendData("Click, Article from home (Bloque1)", e.currentTarget, block1)
+                        sendData("Click, Article from home (Bloque2)", e.currentTarget, block2)
+                    }),
+                    SalesforceInteractions.listener("click", `.sectionfull article.item`, (e) => {
+                        let main = document.querySelector('.main-container');
+                        let block1 = main.childNodes[0].querySelectorAll('article.item');
+                        let block2 = main.childNodes[2].querySelectorAll('article.item')
                         sendData("Click, Article from home (Bloque1)", e.currentTarget, block1)
                         sendData("Click, Article from home (Bloque2)", e.currentTarget, block2)
                     }),
