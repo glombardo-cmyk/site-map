@@ -194,7 +194,8 @@ function sendDataFromHomeBlocks(nameEvent, target, container) {
                         emailAddress: email
                     },
                     attributes: {
-                        name: userName
+                        name: firstName,
+                        lastName: lastName
                     }
                 }
             });
@@ -225,8 +226,8 @@ function ReadGlobalEvents(event, listeners) {
             name: dataName,
             attributes: {
                 userIdCms: idUser,
-                name: userName,
-                lastName: userName,
+                name: firstName,
+                lastName: firstName,
                 isSuscriber: isSuscriber,
                 emailAddress: email,
                 continueUrl: url
