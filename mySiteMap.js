@@ -74,7 +74,7 @@ let homeInteractions = {
 }
 
 let payWallInteractions = {
-    name: "PayWall"
+    name: PayWallIteractionName()
 }
 
 const home = new PageType("Home", "cronista.com", homeInteractions, homeListeners, false);
@@ -132,11 +132,6 @@ function PageType(name, myUrl, interaction, myEvents, isArticle) {
     };
     this.interaction = interaction;
     this.listeners = GenerateListeners(name, myEvents);
-    if (name == "PayWall") {
-        this.onActionEvent = (actionEvent) => {
-            return PayWallActions(actionEvent);
-        }
-    }
 }
 
 function GlobalActions(actionEvent) {
@@ -157,20 +152,20 @@ function GlobalActions(actionEvent) {
     return actionEvent;
 }
 
-function PayWallActions(actionEvent) {
+function PayWallIteractionName() {
+    let typeOfPayWall = "";
     let limit = new URL(window.location.href).searchParams.get("limit")
-    actionEvent.user = actionEvent.user || {};
-    actionEvent.user.attributes = actionEvent.user.attributes || {};
+
     if (limit != null) {
         const isLimit = limit === 'true';
-        actionEvent.user.attributes.typeOfEntry = !isLimit ? "choque exclusivo" : "choque metered";
-        let continueUrl = new URL(window.location.href).searchParams.get("continue")
-        actionEvent.user.attributes.continueUrl = continueUrl;
+        typeOfPayWall = !isLimit ? "choque exclusivo" : "choque metered";
+        //let continueUrl = new URL(window.location.href).searchParams.get("continue")
+        typeOfPayWall = "Pay wall - " + typeOfPayWall;
     } else {
-        actionEvent.user.attributes.typeOfEntry = "Choque directo";
+        typeOfPayWall = "Pay wall - Choque directo";
     }
 
-    return actionEvent;
+    return typeOfPayWall;
 }
 
 function ReadHomeBlocks(event) {
