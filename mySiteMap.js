@@ -4,7 +4,8 @@ let pages = []
 esURLValida(window.location.href)
 
 //DATOS DE USUARIO
-let isAnonimus = false
+let isAnonimus = false;
+let isWebApp = false;
 let email = "";
 let idUser = "";
 let firstName = "";
@@ -16,12 +17,12 @@ let phone = "";
 if (typeof vsm.loggedIn === 'function') {
     // La función existe
     isAnonimus = vsm.loggedIn() === false || vsm.loggedIn() === null || vsm.loggedIn() === undefined ? true : false
+    isWebApp = site.isWebAPP;
     email = vsm.session.email != "" ? vsm.session.email : "";
     idUser = vsm.session.id != "" ? vsm.session.id : "";
     firstName = vsm.session.name != "" ? vsm.session.name : "";
     lastName = vsm.session.lastName != "" ? vsm.session.lastName : "";
     isSuscriber = site.session.isSuscriber() && site.session != undefined ? "Suscriptor" : "Usuario";
-    console.log(isSuscriber)
 }
 let isMatch = false
 let url = ""
@@ -55,7 +56,7 @@ let homeListeners = [
     { class: `.sectionfull article.item`, labelName: '', ItPropagation: false },
     { class: `article.locked`, labelName: 'Article Member from Home', ItPropagation: false },
     { class: `.columnists .items article.item`, labelName: 'Clumnists from Home', ItPropagation: false },
-    { class: "#onboardingUsuarioHome .panel.step-panel.selected[index='3'] .botonera .btn-verde", labelName: 'Botón: Descubrí Members', ItPropagation: false },
+      { class: "#onboardingUsuarioHome .panel.step-panel.selected[index='3'] .botonera .btn-verde", labelName: 'Botón: Descubrí Members', ItPropagation: false },
     { class: "#onboardingSuscriptorHome .panel.step-panel.selected[index='4'] .botonera .btn-blanco", labelName: 'Botón: ir a Newsletter', ItPropagation: false },
     { class: "#onboardingSuscriptorHome .panel.step-panel.selected[index='5'] .botonera .btn-blanco", labelName: 'Botón: Ir al Quién es quién', ItPropagation: false },
     { class: "#onboardingSuscriptorHome .panel.step-panel.selected[index='5'] .botonera .btn-verde", labelName: 'Botón: Seguir navegando', ItPropagation: false },
@@ -73,6 +74,8 @@ let payWallListeners = [
     { class: `.page.suscripciones .whatsapp-wrapper`, labelName: 'Botón Whatsapp from Pay Wall', ItPropagation: false },
     { class: `.footer-footer a:first-child`, labelName: 'Botón Terminos y condiciones from Pay Wall', ItPropagation: false },
     { class: `.footer-footer a:nth-child(2)`, labelName: 'Botón Precios vigentes from Pay Wall', ItPropagation: false },
+    { class: `.cardGroup #planCorpo`, labelName: 'Planes Corporativos', ItPropagation: false },
+    { class: `.cardGroup #needHelp`, labelName: '¿Necesitás ayuda?', ItPropagation: false },
 ]
 
 //SELECTORES LogInWall
@@ -247,7 +250,6 @@ if (document.querySelector("#pagecontent .news") || document.querySelector("#pag
 
 
     const metaTag = document.querySelector('meta[property="og:image"]');
-    console.log(metaTag)
     if (metaTag != null) {
         let interaction = {
             name: SalesforceInteractions.CatalogObjectInteractionName.ViewCatalogObject,
@@ -368,6 +370,7 @@ function GlobalActions(actionEvent) {
         actionEvent.user.attributes.contentZones || {};
         actionEvent.user.attributes.emailAddress = email;
         actionEvent.user.attributes.isSuscription = isSuscriber;
+        actionEvent.user.attributes.isWebApp = isWebApp;
         actionEvent.user.attributes.name = firstName;
         actionEvent.user.attributes.lastName = lastName;
         actionEvent.user.attributes.date = dateTime
@@ -485,10 +488,10 @@ function ReadGlobalEvents(event, listeners) {
     if (listeners.labelName == 'dolares') {
         dataName = "Cotización dólar: " + SalesforceInteractions.cashDom(event.currentTarget.querySelector(".name")).text()
     }
-
-    if (listeners.labelName == 'Botón Cancelar suscripción') {
+    
+     if (listeners.labelName == 'Botón Cancelar suscripción') { 
         const popupDescriptionElement = document.querySelector(".popup-description");
-
+    
         if (popupDescriptionElement) { // Comprueba si el elemento existe
             dataName = "Cancelar suscripción: " + SalesforceInteractions.cashDom(popupDescriptionElement).text();
         } else {
@@ -612,7 +615,6 @@ function GenerateListeners(pageType, elements) {
                 })
                 listeners.push(myEventsBlock)
             } else {
-                console.log(elements[i].class)
                 let myEvents = SalesforceInteractions.listener("click", `${elements[i].class}`, (e) => {
                     if (elements[i].ItPropagation) {
                         e.stopPropagation();
