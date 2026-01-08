@@ -354,7 +354,7 @@ const article = new PageType(
 
 const cotizaciones = new PageType(
     "Cotizaciones", 
-    "/informacion-de-mercados", 
+    "/MercadosOnline", 
     { name: "Cotizaciones View" },
     cotizacionesListeners, 
     false);
