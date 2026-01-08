@@ -199,3 +199,164 @@ evitar repetir código
 En términos simples:
 
 new PageType(...) devuelve un objeto compatible con SalesforceInteractions.initSitemap
+
+
+
+-----------------------------------------------------------------------------------------------
+
+
+##  En Salesforce Personalization (Marketing Cloud Personalization) el Catálogo de Objetos (Catalog Objects) es:
+
+🗂️ Un modelo estructurado de “cosas” de tu negocio que los usuarios pueden ver, leer o interactuar, y que Salesforce usa para personalizar, recomendar y decidir contenido.
+
+En tu caso (sitio de noticias), los artículos y las cotizaciones YA son objetos de catálogo.
+
+##  🧠 Qué es un Catalog Object (en simple)
+
+##  Un Catalog Object representa una entidad como:
+
+Tipo	Ejemplos
+Article	Nota, noticia, editorial
+Cotizaciones	Dólar, acciones, bonos
+Product	Producto e-commerce
+Category	Sección, tema
+Author	Periodista
+
+##  👉 Salesforce no piensa en páginas, piensa en objetos.
+
+##  🔥 Para qué sirve el catálogo
+
+El catálogo permite que Salesforce:
+
+haga recomendaciones inteligentes
+
+construya afinidades (le gusta economía, dólar, X autor)
+
+segmente usuarios
+
+entrene modelos de IA
+
+haga personalización real, no solo reglas
+
+Sin catálogo 👉 solo tracking básico.
+
+##  🧩 Cómo se construye (en tu código)
+
+En tu implementación, el catálogo se construye al momento de la vista, usando un CatalogObjectInteraction.
+
+Ejemplo real (TU código)
+return {
+  name: SalesforceInteractions.CatalogObjectInteractionName.ViewCatalogObject,
+  catalogObject: {
+    type: "Article",
+    id: articleId,
+    attributes: {
+      url: canonicalUrl,
+      name: headlineBasic,
+      description: subheadline,
+      imageUrl,
+      articleTitle: headlineBasic,
+      publishDate,
+      authorName: creator,
+      accessCondition
+    },
+    relatedCatalogObjects: {
+      Category: [sectionText.toUpperCase()],
+      Autores: [creator.toUpperCase()],
+      CondicionDeAcceso: [accessCondition.toUpperCase()]
+    }
+  }
+};
+
+
+Esto hace 3 cosas muy importantes:
+
+1️⃣ Crea / actualiza el objeto en el catálogo
+type: "Article",
+id: articleId
+
+
+👉 Si no existe → lo crea
+👉 Si existe → lo actualiza
+
+2️⃣ Registra que el usuario LO VIÓ
+ViewCatalogObject
+
+
+👉 Esto es una interacción semántica, no un simple page view.
+
+Salesforce entiende:
+
+“este usuario vio ESTE artículo”
+
+3️⃣ Conecta relaciones
+relatedCatalogObjects
+
+
+Ejemplo:
+
+Article → Category
+
+Article → Author
+
+Article → Condición de acceso
+
+Esto permite cosas como:
+
+“usuarios que leen ECONOMÍA”
+
+“usuarios que leen a ESTE autor”
+
+“usuarios que leen contenido premium”
+
+## 🧠 Diferencia entre Page View y Catalog View
+Page View	Catalog Object
+Vio una página	Vio un objeto
+Sin contexto	Con metadata
+Poco inteligente	Entrena IA
+Tracking básico	Personalización real
+
+👉 Vos usás ambos, pero el Article sobrescribe el Page View normal.
+
+🧩 Tu catálogo real (según tu código)
+📘 Objeto: Article
+
+Atributos:
+
+título
+
+sección
+
+autor
+
+fecha
+
+imagen
+
+tipo de acceso
+
+Relaciones:
+
+Category
+
+Autores
+
+CondicionDeAcceso
+
+📈 Objeto: Cotizaciones
+type: "Cotizaciones"
+
+
+Relación:
+
+TipoDeCotizaciones
+
+🎯 Ejemplos de uso real
+
+Gracias a esto Salesforce puede:
+
+✔ Recomendar artículos similares
+✔ Mostrar banners según sección favorita
+✔ Ofrecer suscripción a lectores premium
+✔ Personalizar home por intereses
+✔ Activar campañas post-lectura
