@@ -62,6 +62,7 @@ const globalZones = [
  * LISTENERS GLOBALES
  ***********************/
 const globalListeners = [
+    { class: ".masthead__ticker-item a", labelName: "Ticker" },
     { class: ".masthead__user-info__signin", labelName: "Botón Ingresar" },
     { class: ".masthead__subscribe-button", labelName: "Botón Suscribite" },
     { class: ".burger-icon", labelName: "Botón Menu" },
@@ -83,8 +84,9 @@ const payWallListeners = [
 ];
 
 const articleListeners = [
+    { class: ".masthead__ticker-item a", labelName: "Ticker" },
     { class: ".masthead__main-share", labelName: "Compartir" },
-    { class: ".paywall-chain__inner", labelName: "Paywall Article" },
+    { class: ".paywall-chain__btn", labelName: `Ver todos los planes`, ItPropagation: false },
     { class: ".paywall-chain__inner .swiper-slide:first-child .paywall-card__button", labelName: `${SalesforceInteractions.cashDom(document.querySelector(".paywall-chain__inner .swiper-slide:first-child .paywall-card__title")).text()}`, ItPropagation: false },
     { class: ".paywall-chain__inner .swiper-slide:nth-child(2) .paywall-card__button", labelName: `${SalesforceInteractions.cashDom(document.querySelector(".paywall-chain__inner .swiper-slide:first-child .paywall-card__title")).text()}`, ItPropagation: false },
     { class: ".paywall-chain__inner .swiper-slide:nth-child(3) .paywall-card__button", labelName: `${SalesforceInteractions.cashDom(document.querySelector(".paywall-chain__inner .swiper-slide:first-child .paywall-card__title")).text()}`, ItPropagation: false },
@@ -99,6 +101,7 @@ const perfilListeners = [
 
 //SELECTORES Cotizaciones
 const cotizacionesListeners = [
+    { class: ".masthead__ticker-item a", labelName: "Ticker" },
     { class: `.markets-breadcrumb__item a span`, labelName: 'Breadcrumb', ItPropagation: false },
     { class: `.markets-feed__card__button.false`, labelName: 'Seguir (cotización)', ItPropagation: false },
 ]
@@ -106,6 +109,7 @@ const cotizacionesListeners = [
 
 //SELECTORES LANDING DÓLAR
 const landingDolarListeners = [
+    { class: ".masthead__ticker-item a", labelName: "Ticker" },
     { class: ".markets-feed__card__name a", labelName: 'dolares', ItPropagation: false },
     { class: `.markets-breadcrumb__item a span`, labelName: 'Breadcrumb', ItPropagation: false },
     { class: ".markets-feed__card__button", labelName: `Dolares|Siguiendo`, ItPropagation: false },
@@ -113,6 +117,7 @@ const landingDolarListeners = [
 
 //SELECTORES MERCADOS ONLINE
 const mercadosOnlineListeners = [
+    { class: ".masthead__ticker-item a", labelName: "Ticker" },
     { class: `nav.breadcrumb ol li a span`, labelName: 'Breadcrumb', ItPropagation: false },
 ]
 
@@ -179,6 +184,7 @@ function PageType(name, myUrl, interaction, myEvents, isTemplate) {
             if (articleInteraction) {
                 this.interaction = articleInteraction;
             }
+            observePaywall();
             this.listeners = GenerateListeners(name, myEvents);
             
             return true;
@@ -250,6 +256,14 @@ function ReadGlobalEvents(event, listeners) {
     
     if (listeners.labelName == 'Quiero suscribirme') {
         dataName = "Botón: " + listeners.labelName + ": " + SalesforceInteractions.cashDom(event.target.parentNode.querySelector(".paywall-card__title")).text()
+    }
+
+    if (listeners.labelName === 'Ticker') {
+        const container = event.target.closest(".masthead__ticker-item");
+        const child = container.querySelector(".masthead__ticker-name");
+
+        dataName = "Botón: " + listeners.labelName + ": " +
+            SalesforceInteractions.cashDom(child).text();
     }
 
      if (listeners.labelName == "Dolares|Siguiendo") {
@@ -359,8 +373,6 @@ const cotizaciones = new PageType(
     cotizacionesListeners, 
     false);
 
-
-
 const globalData = new PageType(
     "Datos Globales", 
     "/datos", 
@@ -395,8 +407,33 @@ const suscriptionsForm = new PageType(
  * PAGE TYPES ARRAY (FILTRADO)
  ***********************/
 function Pages() {
-     pages.push(home,homeEspana, payWall,perfil,landingDolar,mercadosOnline,article, cotizaciones,globalData,landingEventosGeneral,logInWall,suscriptionsForm);
+     pages.push(home, homeEspana, payWall, perfil, landingDolar, mercadosOnline, article, cotizaciones, globalData, landingEventosGeneral, logInWall, suscriptionsForm);
      return pages
+}
+
+function observePaywall() {
+    if (window.__paywallObserved) return;
+    window.__paywallObserved = true;
+
+    const observer = new MutationObserver(() => {
+        const paywall = document.querySelector(".paywall-chain__inner");
+        if (paywall && !paywall.dataset.sfTracked) {
+            paywall.dataset.sfTracked = "true";
+
+            SalesforceInteractions.sendEvent({
+                interaction: {
+                    name: "Paywall Shown"
+                }
+            });
+
+            observer.disconnect();
+        }
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
 }
 
 /***********************
