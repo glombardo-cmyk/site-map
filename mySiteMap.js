@@ -1,8 +1,8 @@
 /***********************
  * VARIABLES GLOBALES
  ***********************/
-let enviroment = "";
-let pages = [];
+let enviromentPerso = "";
+let pagesPerso = [];
 
 // Detecta entorno
 esURLValida(window.location.href);
@@ -27,21 +27,19 @@ const arcUser = getArcUserProfile();
 /***********************
  * DATOS USUARIO
  ***********************/
-let isAnonimus = true;
-let email = "";
-let idUser = "";
-let firstName = "";
-let lastName = "";
-let isSuscriber = document.cookie.includes("crprm") ? "Suscriptor" : "Usuario";
-let userDni = "";
-let phone = "";
+let isAnonimusPerso = true;
+let emailPerso = "";
+let idUserPerso = "";
+let firstNamePerso = "";
+let lastNamePerso = "";
+let isSuscriberPerso = document.cookie.includes("crprm") ? "Suscriptor" : "Usuario";
 
 if (arcUser) {
-    isAnonimus = false;
-    email = arcUser.email || "";
-    idUser = arcUser.uuid || "";
-    firstName = arcUser.firstName || "";
-    lastName = arcUser.lastName || "";
+    isAnonimusPerso = false;
+    emailPerso = arcUser.email || "";
+    idUserPerso = arcUser.uuid || "";
+    firstNamePerso = arcUser.firstName || "";
+    lastNamePerso = arcUser.lastName || "";
 }
 
 /***********************
@@ -165,7 +163,7 @@ function PageType(name, myUrl, interaction, myEvents, isTemplate) {
             return true;
         }
 
-        if (myUrl && url === `${enviroment}${myUrl}`) {
+        if (myUrl && url === `${enviromentPerso}${myUrl}`) {
             match = true;
         }
 
@@ -173,7 +171,7 @@ function PageType(name, myUrl, interaction, myEvents, isTemplate) {
             match = true
         }
 
-        if (name === "Home" && url === enviroment) {
+        if (name === "Home" && url === enviromentPerso) {
             match = true;
         }
 
@@ -229,17 +227,17 @@ function GenerateListeners(pageType, elements = []) {
 function GlobalActions(actionEvent) {
     actionEvent.user = actionEvent.user || {};
     actionEvent.user.attributes = {
-        emailAddress: email,
-        name: firstName,
-        lastName: lastName,
-        isAnonimus,
-        isSuscriber,
+        emailAddress: emailPerso,
+        name: firstNamePerso,
+        lastName: lastNamePerso,
+        isAnonimusPerso,
+        isSuscriberPerso,
         date: dateTime
     };
-    if (idUser) {
+    if (idUserPerso) {
         actionEvent.user.identities = {
-            userId: idUser,
-            userIdCms: idUser
+            userId: idUserPerso,
+            userIdCms: idUserPerso
         };
     }
     return actionEvent;
@@ -299,10 +297,10 @@ function ReadGlobalEvents(event, listeners) {
         interaction: { name: dataName },
         user: {
             attributes: {
-                emailAddress: email,
-                name: firstName,
-                lastName: lastName,
-                isAnonimus
+                emailAddress: emailPerso,
+                name: firstNamePerso,
+                lastName: lastNamePerso,
+                isAnonimusPerso
             }
         }
     });
@@ -338,7 +336,7 @@ const payWall = new PageType(
 
 const perfil = new PageType(
     "Perfil", 
-    "/usuario/perfil/", 
+    "/usuario/perfil", 
     { name: "Perfil View" }, 
     perfilListeners, 
     false
@@ -407,8 +405,8 @@ const suscriptionsForm = new PageType(
  * PAGE TYPES ARRAY (FILTRADO)
  ***********************/
 function Pages() {
-     pages.push(home, homeEspana, payWall, perfil, landingDolar, mercadosOnline, article, cotizaciones, globalData, landingEventosGeneral, logInWall, suscriptionsForm);
-     return pages
+     pagesPerso.push(home, homeEspana, payWall, perfil, landingDolar, mercadosOnline, article, cotizaciones, globalData, landingEventosGeneral, logInWall, suscriptionsForm);
+     return pagesPerso
 }
 
 function observePaywall() {
@@ -442,11 +440,11 @@ function observePaywall() {
 function esURLValida(url) {
     const match = url.match(/^https:\/\/(dev|qa|qa2|www)\.cronista\.com/i);
     if (match) {
-        enviroment = match[0];
+        enviromentPerso = match[0];
     } else if (url.includes("arc-cdn.net")) {
-        enviroment = "https://elcronista-el-cronista-sandbox.web.arc-cdn.net";
+        enviromentPerso = "https://elcronista-el-cronista-sandbox.web.arc-cdn.net";
     } else {
-        enviroment = "";
+        enviromentPerso = "";
     }
 }
 
@@ -504,26 +502,35 @@ function buildArticleInteraction() {
     };
 }
 
-function buildCotizacionesInteraction(){
+function buildCotizacionesInteraction() {
+    if (!window.Fusion?.globalContent) return null;
+
+    const {
+        _id,
+        Nombre,
+        tokenValue
+    } = Fusion.globalContent;
+
+    if (!_id) return null;
+
     return {
         name: SalesforceInteractions.CatalogObjectInteractionName.ViewCatalogObject,
         catalogObject: {
             type: "Cotizaciones",
-            id: Fusion.globalContent._id,
+            id: String(_id),
             attributes: {
                 url: window.location.href,
-                name: Fusion.globalContent.Nombre,
+                name: Nombre || "",
             },
             relatedCatalogObjects: {
-                TipoDeCotizaciones: SalesforceInteractions.DisplayUtils.pageElementLoaded(
-                    "html",
-                ).then((ele) => {
-                    return [Fusion.globalContent.tokenValue.toUpperCase()]
-                }),
+                TipoDeCotizaciones: tokenValue
+                    ? [tokenValue.toUpperCase()]
+                    : []
             },
         },
-    }
+    };
 }
+
 
 /***********************
  * INIT SALESFORCE
@@ -549,26 +556,6 @@ function waitForPageReady(callback) {
     }, 100);
 }
 
-function injectSalesforceZones() {
-    if (!document.getElementById("sf-header-zone")) {
-        const header = document.querySelector(".homepage__header");
-        if (header) {
-            const div = document.createElement("div");
-            div.id = "sf-header-zone";
-            header.appendChild(div);
-        }
-    }
-
-    if (!document.getElementById("sf-footer-zone")) {
-        const footer = document.querySelector(".homepage__footer");
-        if (footer) {
-            const div = document.createElement("div");
-            div.id = "sf-footer-zone";
-            footer.appendChild(div);
-        }
-    }
-}
-
 function getCookieDomain() {
     const host = window.location.hostname;
     console.log(host)
@@ -586,7 +573,7 @@ function getCookieDomain() {
 SalesforceInteractions.init({
     cookieDomain: getCookieDomain()
 }).then(() => {
-    injectSalesforceZones()
+
     const sitemapConfig = {
         global: {
             onActionEvent: GlobalActions,
