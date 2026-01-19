@@ -170,6 +170,14 @@ function PageType(name, myUrl, interaction, myEvents, isTemplate) {
         if (name == "Suscriptions form" && validarParteDeURL(url, "/suscripciones/plan-") && !validarParteDeURL(url, "/#listo")) {
             match = true
         }
+        
+        if (name == 'Evento' && validarParteDeURL(url, "/eventos/")) {
+            
+            this.interaction.name = "Evento: " + SalesforceInteractions.cashDom(document.querySelector(".event-header__title")).text();
+            this.listeners = GenerateListeners(name, myEvents);
+            
+            return true;
+        }
 
         if (name === "Home" && url === enviromentPerso) {
             match = true;
@@ -386,6 +394,13 @@ const landingEventosGeneral = new PageType(
     [], 
     false);
 
+const landingEvento = new PageType(
+    "Evento", 
+    "/eventos", 
+    { name: "Eventos View" },
+    [], 
+    false);    
+
 const logInWall = new PageType(
     "LogInWall", 
     "/ingresa", 
@@ -414,7 +429,7 @@ function observePaywall() {
     window.__paywallObserved = true;
 
     const observer = new MutationObserver(() => {
-        const paywall = document.querySelector(".paywall-chain__inner");
+        const paywall = document.querySelector(".paywall-chain--show");
         if (paywall && !paywall.dataset.sfTracked) {
             paywall.dataset.sfTracked = "true";
 
