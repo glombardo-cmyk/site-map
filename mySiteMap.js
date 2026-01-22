@@ -179,6 +179,14 @@ function PageType(name, myUrl, interaction, myEvents, isTemplate) {
             return true;
         }
 
+        if (name == 'Tema' && validarParteDeURL(url, "/tema/")) {
+            
+            this.interaction.name = "Tema: " + SalesforceInteractions.cashDom(document.querySelector(".section-head__title")).text();
+            this.listeners = GenerateListeners(name, myEvents);
+            
+            return true;
+        }
+
         if (name === "Home" && url === enviromentPerso) {
             match = true;
         }
@@ -415,12 +423,19 @@ const suscriptionsForm = new PageType(
     suscriptionsFormListeners, 
     false);
 
+const temas = new PageType(
+    "Tema", 
+    "/tema/", 
+    { name: "Tema View" },
+    [], 
+    false);
+
 
 /***********************
  * PAGE TYPES ARRAY (FILTRADO)
  ***********************/
 function Pages() {
-     pagesPerso.push(home, homeEspana, payWall, perfil, landingDolar, mercadosOnline, article, cotizaciones, globalData, landingEventosGeneral, logInWall, suscriptionsForm);
+     pagesPerso.push(home, homeEspana, payWall, perfil, landingDolar, mercadosOnline, article, cotizaciones, globalData, landingEventosGeneral, logInWall, suscriptionsForm,temas);
      return pagesPerso
 }
 
