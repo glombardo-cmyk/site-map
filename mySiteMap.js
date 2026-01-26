@@ -154,7 +154,6 @@ function validarParteDeURL(url, parte) {
  * PAGE TYPE CONSTRUCTOR
  ***********************/
 function PageType(name, myUrl, interaction, myEvents, isTemplate) {
-    console.log(name)
     this.name = name;
     this.isMatch = () => {
         let url = window.location.href.split("?")[0].replace(/\/$/, "");
@@ -293,15 +292,14 @@ function ReadGlobalEvents(event, listeners) {
             dataName = "Dolares Siguiendo: - " + SalesforceInteractions.cashDom(title).text();
         }
     }
-
-     if (listeners.labelName === 'Botón - indicador') {
+    
+   if (listeners.labelName === 'Botón - indicador') {
         const container = event.target.closest(".markets-navigation__item");
         const child = container.querySelector(".markets-navigation__button");
 
         dataName = listeners.labelName + ": " +
             SalesforceInteractions.cashDom(child).text();
     }
-
 
     if (listeners.labelName == "TAGS") {
         switch (event.target.innerText) {
@@ -440,16 +438,24 @@ const suscriptionsForm = new PageType(
 const temas = new PageType(
     "Tema", 
     "/tema/", 
-    { name: "Tema View" },
+    { name: "Temas View" },
     [], 
     false);
+    
+const columnistas = new PageType(
+    "Columnistas", 
+    "/columnistas", 
+    { name: "Columnistas View" },
+    [], 
+    false);
+
 
 
 /***********************
  * PAGE TYPES ARRAY (FILTRADO)
  ***********************/
 function Pages() {
-     pagesPerso.push(home, homeEspana, payWall, perfil, landingDolar, mercadosOnline, article, cotizaciones, globalData, landingEventosGeneral, logInWall, suscriptionsForm,temas);
+     pagesPerso.push(home, homeEspana, payWall, perfil, landingDolar, mercadosOnline, article, cotizaciones, globalData, landingEventosGeneral, logInWall, suscriptionsForm,temas,columnistas);
      return pagesPerso
 }
 
@@ -602,7 +608,6 @@ function waitForPageReady(callback) {
 
 function getCookieDomain() {
     const host = window.location.hostname;
-    console.log(host)
     // Producción
     if (host === "cronista.com" || host.endsWith(".cronista.com")) {
         return "cronista.com";
