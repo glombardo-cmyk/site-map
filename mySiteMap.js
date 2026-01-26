@@ -117,6 +117,7 @@ const landingDolarListeners = [
 const mercadosOnlineListeners = [
     { class: ".masthead__ticker-item a", labelName: "Ticker" },
     { class: `nav.breadcrumb ol li a span`, labelName: 'Breadcrumb', ItPropagation: false },
+    { class: ".markets-navigation__item", labelName: "Botón - indicador" },
 ]
 
 //SELECTORES LogInWall
@@ -292,6 +293,15 @@ function ReadGlobalEvents(event, listeners) {
             dataName = "Dolares Siguiendo: - " + SalesforceInteractions.cashDom(title).text();
         }
     }
+
+     if (listeners.labelName === 'Botón - indicador') {
+        const container = event.target.closest(".markets-navigation__item");
+        const child = container.querySelector(".markets-navigation__button");
+
+        dataName = listeners.labelName + ": " +
+            SalesforceInteractions.cashDom(child).text();
+    }
+
 
     if (listeners.labelName == "TAGS") {
         switch (event.target.innerText) {
