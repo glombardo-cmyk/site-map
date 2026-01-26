@@ -168,7 +168,11 @@ function PageType(name, myUrl, interaction, myEvents, isTemplate) {
         }
 
         if (name == "Suscriptions form" && validarParteDeURL(url, "/suscripciones/plan-") && !validarParteDeURL(url, "/#listo")) {
-            match = true
+            
+            this.interaction.name = "Suscriptions form: " + SalesforceInteractions.cashDom(document.querySelector(".plans-card-v2__title")).text();
+            this.listeners = GenerateListeners(name, myEvents);
+            
+            return true;
         }
         
         if (name == 'Evento' && validarParteDeURL(url, "/eventos/")) {
