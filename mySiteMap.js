@@ -353,6 +353,30 @@ const homeEspana = new PageType(
     false
 );
 
+const homeMexico = new PageType(
+    "HomeMexico",
+    "/mexico",
+    { name: "Home Mexico View" },
+    homeListeners,
+    false
+);
+
+const homeColombia = new PageType(
+    "HomeColombia",
+    "/colombia",
+    { name: "Home Colombia View" },
+    homeListeners,
+    false
+);
+
+const homeUSA = new PageType(
+    "HomeUsa",
+    "/usa",
+    { name: "Home USA View" },
+    homeListeners,
+    false
+);
+
 const payWall = new PageType(
     "PayWall",
     "/suscripciones" || "/suscripciones/?utm_id=direct",
@@ -455,7 +479,7 @@ const columnistas = new PageType(
  * PAGE TYPES ARRAY (FILTRADO)
  ***********************/
 function Pages() {
-     pagesPerso.push(home, homeEspana, payWall, perfil, landingDolar, mercadosOnline, article, cotizaciones, globalData, landingEventosGeneral, logInWall, suscriptionsForm,temas,columnistas);
+     pagesPerso.push(home, homeEspana, payWall, perfil, landingDolar, mercadosOnline, article, cotizaciones, globalData, landingEventosGeneral, logInWall, suscriptionsForm,temas,columnistas,homeMexico,homeColombia,homeUSA);
      return pagesPerso
 }
 
