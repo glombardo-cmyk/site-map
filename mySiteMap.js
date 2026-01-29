@@ -250,8 +250,7 @@ function GlobalActions(actionEvent) {
         emailAddress: emailPerso,
         name: firstNamePerso,
         lastName: lastNamePerso,
-        isAnonimusPerso,
-        isSuscriberPerso,
+        isSuscription: isSuscriberPerso,
         date: dateTime
     };
     if (idUserPerso) {
@@ -328,7 +327,7 @@ function ReadGlobalEvents(event, listeners) {
                 emailAddress: emailPerso,
                 name: firstNamePerso,
                 lastName: lastNamePerso,
-                isAnonimusPerso
+                isSuscription: isSuscriberPerso,
             }
         }
     });
