@@ -641,29 +641,31 @@ function getCookieDomain() {
     // o null si no querés cookie cross-domain
 }
 
+console.log("arcUser:", arcUser);
 
-SalesforceInteractions.init({
-    cookieDomain: getCookieDomain()
-}).then(() => {
+if (arcUser && typeof SalesforceInteractions !== "undefined") {
+    SalesforceInteractions.init({
+        cookieDomain: getCookieDomain()
+    }).then(() => {
+        const sitemapConfig = {
+            global: {
+                onActionEvent: GlobalActions,
+                contentZones: globalZones,
+                listeners: GenerateListeners("Global", globalListeners)
+            },
+            pageTypeDefault: {
+                name: "default",
+                interaction: { name: "Default Page" }
+            },
+            pageTypes: Pages()
+        };
 
-    const sitemapConfig = {
-        global: {
-            onActionEvent: GlobalActions,
-            contentZones: globalZones,
-            listeners: GenerateListeners("Global", globalListeners)
-        },
-        pageTypeDefault: {
-            name: "default",
-            interaction: { name: "Default Page" }
-        },
-        pageTypes: Pages()
-    };
-
-    if (window.__sfSitemapInitialized__) return;
-    window.__sfSitemapInitialized__ = true;
-    
-    waitForPageReady(() => {
-        console.log("SITEMAP OK", sitemapConfig);
-        SalesforceInteractions.initSitemap(sitemapConfig);
+        if (window.__sfSitemapInitialized__) return;
+        window.__sfSitemapInitialized__ = true;
+        
+        waitForPageReady(() => {
+            console.log("SITEMAP OK", sitemapConfig);
+            SalesforceInteractions.initSitemap(sitemapConfig);
+        });
     });
-});
+}
