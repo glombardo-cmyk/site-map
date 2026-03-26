@@ -104,6 +104,10 @@ const cotizacionesListeners = [
     { class: `.markets-feed__card__button.false`, labelName: 'Seguir (cotización)', ItPropagation: false },
 ]
 
+//SELECTORES Secciones
+const seccionesListeners  = [
+    { class: ".masthead__ticker-item a", labelName: "Ticker" },
+]
 
 //SELECTORES LANDING DÓLAR
 const landingDolarListeners = [
@@ -203,6 +207,14 @@ function PageType(name, myUrl, interaction, myEvents, isTemplate) {
                 this.interaction = articleInteraction;
             }
             observePaywall();
+            this.listeners = GenerateListeners(name, myEvents);
+            
+            return true;
+        }
+
+         if (name === "Section" && Fusion.globalContent.node_type == 'section') {
+            
+            this.interaction.name = "Section: " +  Fusion.globalContent.name;
             this.listeners = GenerateListeners(name, myEvents);
             
             return true;
@@ -422,6 +434,14 @@ const cotizaciones = new PageType(
     cotizacionesListeners, 
     false);
 
+
+const secciones = new PageType(
+    "Section", 
+    "/", 
+    { name: "Secciones View" },
+    seccionesListeners, 
+    false);  
+
 const globalData = new PageType(
     "Datos Globales", 
     "/datos", 
@@ -478,7 +498,7 @@ const columnistas = new PageType(
  * PAGE TYPES ARRAY (FILTRADO)
  ***********************/
 function Pages() {
-     pagesPerso.push(home, homeEspana, payWall, perfil, landingDolar, mercadosOnline, article, cotizaciones, globalData, landingEventosGeneral, logInWall, suscriptionsForm,temas,columnistas,homeMexico,homeColombia,homeUSA);
+     pagesPerso.push(home, homeEspana, payWall, perfil, landingDolar, mercadosOnline, article, cotizaciones, globalData, landingEventosGeneral, logInWall, suscriptionsForm,temas,columnistas,homeMexico,homeColombia,homeUSA, secciones);
      return pagesPerso
 }
 
@@ -603,7 +623,6 @@ function buildCotizacionesInteraction() {
         },
     };
 }
-
 
 /***********************
  * INIT SALESFORCE
