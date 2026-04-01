@@ -24,6 +24,12 @@ function getArcUserProfile() {
 
 const arcUser = getArcUserProfile();
 
+function getCookie(name) {
+    return document.cookie
+        .split('; ')
+        .some(c => c.startsWith(name + '='));
+}
+
 /***********************
  * DATOS USUARIO
  ***********************/
@@ -32,7 +38,7 @@ let emailPerso = "";
 let idUserPerso = "";
 let firstNamePerso = "";
 let lastNamePerso = "";
-let isSuscriberPerso = document.cookie.includes("crprm") ? "Suscriptor" : "Usuario";
+let isSuscriberPerso = getCookie('crprm') ? 'Suscriptor' : 'Usuario';
 
 if (arcUser) {
     isAnonimusPerso = false;
@@ -85,9 +91,17 @@ const articleListeners = [
     { class: ".masthead__ticker-item a", labelName: "Ticker" },
     { class: ".masthead__main-share", labelName: "Compartir" },
     { class: ".paywall-chain__btn", labelName: `Ver todos los planes`, ItPropagation: false },
-    { class: ".paywall-chain__inner .swiper-slide:first-child .paywall-card__button", labelName: `${SalesforceInteractions.cashDom(document.querySelector(".paywall-chain__inner .swiper-slide:first-child .paywall-card__title")).text()}`, ItPropagation: false },
-    { class: ".paywall-chain__inner .swiper-slide:nth-child(2) .paywall-card__button", labelName: `${SalesforceInteractions.cashDom(document.querySelector(".paywall-chain__inner .swiper-slide:first-child .paywall-card__title")).text()}`, ItPropagation: false },
-    { class: ".paywall-chain__inner .swiper-slide:nth-child(3) .paywall-card__button", labelName: `${SalesforceInteractions.cashDom(document.querySelector(".paywall-chain__inner .swiper-slide:first-child .paywall-card__title")).text()}`, ItPropagation: false },
+    { class: ".paywall-chain__inner .swiper-slide:first-child .paywall-card__button", labelName: `${SalesforceInteractions.cashDom(document.querySelector(".paywall-chain__inner .swiper-slide:first-child .paywall-card__title")).text()}`, ItPropagation: false},
+    { class: ".paywall-chain__inner .swiper-slide:nth-child(2) .paywall-card__button", labelName: `${SalesforceInteractions.cashDom(document.querySelector(".paywall-chain__inner .swiper-slide:nth-child(2) .paywall-card__title")).text()}`, ItPropagation: false },
+    { class: ".paywall-chain__inner .swiper-slide:nth-child(3) .paywall-card__button", labelName: `${SalesforceInteractions.cashDom(document.querySelector(".paywall-chain__inner .swiper-slide:nth-child(3) .paywall-card__title")).text()}`, ItPropagation: false},
+    {
+        class: ".paywall-card__button",
+        ItPropagation: false,
+        resolveName: (event) => {
+        const slide = event.target.closest('.swiper-slide');
+        return slide?.querySelector('.paywall-card__title')?.innerText || 'Plan';
+        }
+    }
 ];
 
 //SELECTORES perfil
@@ -332,7 +346,14 @@ function ReadGlobalEvents(event, listeners) {
         }
     }
 
-    SalesforceInteractions.sendEvent({
+    if (!isSend) return;  
+
+    SalesforceInteractions.sendEvent(GlobalActions({
+        interaction: { name: dataName }
+    }));
+
+
+    /**SalesforceInteractions.sendEvent({
         interaction: { name: dataName },
         user: {
             attributes: {
@@ -342,7 +363,7 @@ function ReadGlobalEvents(event, listeners) {
                 isSuscription: isSuscriberPerso,
             }
         }
-    });
+    });**/
 }
 
 /***********************
@@ -437,7 +458,7 @@ const cotizaciones = new PageType(
 
 const secciones = new PageType(
     "Section", 
-    "/", 
+    null, 
     { name: "Secciones View" },
     seccionesListeners, 
     false);  
@@ -511,11 +532,10 @@ function observePaywall() {
         if (paywall && !paywall.dataset.sfTracked) {
             paywall.dataset.sfTracked = "true";
 
-            SalesforceInteractions.sendEvent({
-                interaction: {
-                    name: "Paywall Shown"
-                }
-            });
+            SalesforceInteractions.sendEvent(GlobalActions({
+                interaction: { name: 'Paywall Shown' }
+            }));
+
 
             observer.disconnect();
         }
@@ -660,9 +680,7 @@ function getCookieDomain() {
     // o null si no querés cookie cross-domain
 }
 
-console.log("arcUser:", arcUser);
 
-if (arcUser && typeof SalesforceInteractions !== "undefined") {
     SalesforceInteractions.init({
         cookieDomain: getCookieDomain()
     }).then(() => {
@@ -687,4 +705,3 @@ if (arcUser && typeof SalesforceInteractions !== "undefined") {
             SalesforceInteractions.initSitemap(sitemapConfig);
         });
     });
-}
