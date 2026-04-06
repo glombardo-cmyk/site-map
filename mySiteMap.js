@@ -680,7 +680,7 @@ function getCookieDomain() {
     // o null si no querés cookie cross-domain
 }
 
-
+if (typeof SalesforceInteractions !== 'undefined') {
     SalesforceInteractions.init({
         cookieDomain: getCookieDomain()
     }).then(() => {
@@ -705,3 +705,4 @@ function getCookieDomain() {
             SalesforceInteractions.initSitemap(sitemapConfig);
         });
     });
+}
