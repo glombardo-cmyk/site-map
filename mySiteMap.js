@@ -24,7 +24,7 @@ function getArcUserProfile() {
 
 const arcUser = getArcUserProfile();
 
-function getCookie(name) {
+function hasCookie(name) {
     return document.cookie
         .split('; ')
         .some(c => c.startsWith(name + '='));
@@ -38,7 +38,11 @@ let emailPerso = "";
 let idUserPerso = "";
 let firstNamePerso = "";
 let lastNamePerso = "";
-let isSuscriberPerso = getCookie('crprm') ? 'Suscriptor' : 'Usuario';
+
+function getSubscriberStatus() {
+    return hasCookie('crprm') ? 'Suscriptor' : 'Usuario';
+}
+
 
 if (arcUser) {
     isAnonimusPerso = false;
@@ -47,12 +51,6 @@ if (arcUser) {
     firstNamePerso = arcUser.firstName || "";
     lastNamePerso = arcUser.lastName || "";
 }
-
-/***********************
- * FECHA
- ***********************/
-const now = new Date();
-const dateTime = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} - hora ${now.getHours()}:${now.getMinutes()}`;
 
 /***********************
  * ZONAS GLOBALES
@@ -97,9 +95,11 @@ const articleListeners = [
     {
         class: ".paywall-card__button",
         ItPropagation: false,
-        resolveName: (event) => {
-        const slide = event.target.closest('.swiper-slide');
-        return slide?.querySelector('.paywall-card__title')?.innerText || 'Plan';
+         resolveName: (event) => {
+            const button = event.target.closest('.paywall-card__button');
+            const slide = button ? button.closest('.swiper-slide') : null;
+            const title = slide ? slide.querySelector('.paywall-card__title') : null;
+            return title ? title.innerText : 'Plan';
         }
     }
 ];
@@ -271,22 +271,39 @@ function GenerateListeners(pageType, elements = []) {
  * GLOBAL ACTIONS
  ***********************/
 function GlobalActions(actionEvent) {
+
+    /***********************
+    * FECHA
+    ***********************/
+    const now = new Date();
+    const dateTime = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} - hora ${now.getHours()}:${now.getMinutes()}`;
+
     actionEvent.user = actionEvent.user || {};
-    actionEvent.user.attributes = {
-        emailAddress: emailPerso,
-        name: firstNamePerso,
-        lastName: lastNamePerso,
-        isSuscription: isSuscriberPerso,
-        date: dateTime
-    };
+
+    // Solo enviar atributos e identidad si el usuario está identificado
     if (idUserPerso) {
         actionEvent.user.identities = {
             userId: idUserPerso,
             userIdCms: idUserPerso
         };
+        actionEvent.user.attributes = {
+            emailAddress: emailPerso,
+            name: firstNamePerso,
+            lastName: lastNamePerso,
+            isSuscription: getSubscriberStatus(), // lazy evaluation
+            isAnonymous: false,
+            date: dateTime
+        };
+    } else {
+        // Usuario anónimo: solo marcar anonimato, sin atributos de identidad
+        actionEvent.user.attributes = {
+            isAnonymous: true
+        };
     }
+
     return actionEvent;
 }
+
 
 /***********************
  * EVENT HANDLER
@@ -352,18 +369,6 @@ function ReadGlobalEvents(event, listeners) {
         interaction: { name: dataName }
     }));
 
-
-    /**SalesforceInteractions.sendEvent({
-        interaction: { name: dataName },
-        user: {
-            attributes: {
-                emailAddress: emailPerso,
-                name: firstNamePerso,
-                lastName: lastNamePerso,
-                isSuscription: isSuscriberPerso,
-            }
-        }
-    });**/
 }
 
 /***********************
@@ -411,7 +416,7 @@ const homeUSA = new PageType(
 
 const payWall = new PageType(
     "PayWall",
-    "/suscripciones" || "/suscripciones/?utm_id=direct",
+    "/suscripciones",
     { name: "PayWall View" },
     payWallListeners,
     false
@@ -519,7 +524,7 @@ const columnistas = new PageType(
  * PAGE TYPES ARRAY (FILTRADO)
  ***********************/
 function Pages() {
-     pagesPerso.push(home, homeEspana, payWall, perfil, landingDolar, mercadosOnline, article, cotizaciones, globalData, landingEventosGeneral, logInWall, suscriptionsForm,temas,columnistas,homeMexico,homeColombia,homeUSA, secciones);
+     pagesPerso.push(home, homeEspana, payWall, perfil, landingDolar, mercadosOnline, article, cotizaciones, globalData, landingEventosGeneral, logInWall, suscriptionsForm,temas,columnistas,homeMexico,homeColombia,homeUSA, secciones,landingEvento);
      return pagesPerso
 }
 
@@ -664,6 +669,7 @@ function waitForPageReady(callback) {
 
         if (attempts >= maxAttempts) {
             clearInterval(interval);
+            console.warn("Salesforce Sitemap: timeout esperando Fusion.globalContent");
         }
     }, 100);
 }
