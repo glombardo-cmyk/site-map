@@ -483,10 +483,10 @@ const landingEventosGeneral = new PageType(
     [], 
     false);
 
-const landingEvento = new PageType(
-    "Evento", 
-    "/eventos", 
-    { name: "Eventos View" },
+const landingCronistaStudio = new PageType(
+    "Cronista Studio", 
+    "/cronista-studio", 
+    { name: "Cronista Studio View" },
     [], 
     false);    
 
@@ -524,7 +524,7 @@ const columnistas = new PageType(
  * PAGE TYPES ARRAY (FILTRADO)
  ***********************/
 function Pages() {
-     pagesPerso.push(home, homeEspana, payWall, perfil, landingDolar, mercadosOnline, article, cotizaciones, globalData, landingEventosGeneral, logInWall, suscriptionsForm,temas,columnistas,homeMexico,homeColombia,homeUSA, secciones,landingEvento);
+     pagesPerso.push(home, homeEspana, payWall, perfil, landingDolar, mercadosOnline, article, cotizaciones, globalData, landingEventosGeneral, logInWall, suscriptionsForm,temas,columnistas,homeMexico,homeColombia,homeUSA, secciones,landingCronistaStudio);
      return pagesPerso
 }
 
