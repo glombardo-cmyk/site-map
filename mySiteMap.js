@@ -192,6 +192,15 @@ function PageType(name, myUrl, interaction, myEvents, isTemplate) {
             
             return true;
         }
+
+         if (name == "Cronista Studio" && validarParteDeURL(url, "/cronista-studio/")) {
+            
+            this.interaction.name = SalesforceInteractions.cashDom(document.querySelector(".event-header__title")).text();
+            this.listeners = GenerateListeners(name, myEvents);
+            
+            return true;
+        }
+        
         
         if (name == 'Evento' && validarParteDeURL(url, "/eventos/")) {
             
