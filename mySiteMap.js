@@ -22,6 +22,28 @@ function getArcUserProfile() {
     }
 }
 
+function getRegistrationDate() {
+    try {
+        const raw = localStorage.getItem("ArcId.USER_PROFILE");
+        if (!raw) return null;
+
+        const parsed = JSON.parse(raw);
+        if (!parsed || !parsed.createdOn) return null;
+
+        const date = new Date(parsed.createdOn);
+
+        // validar que la fecha sea válida
+        if (isNaN(date.getTime())) return null;
+
+        console.log(date.toISOString())
+
+        return date.toISOString(); // 🔥 formato ideal
+    } catch (e) {
+        console.warn("Error obteniendo registrationDate", e);
+        return null;
+    }
+}
+
 const arcUser = getArcUserProfile();
 
 function hasCookie(name) {
@@ -300,6 +322,7 @@ function GlobalActions(actionEvent) {
             name: firstNamePerso,
             lastName: lastNamePerso,
             isSuscription: getSubscriberStatus(), // lazy evaluation
+            registrationDate: getRegistrationDate(),
             isAnonymous: false,
             date: dateTime
         };
