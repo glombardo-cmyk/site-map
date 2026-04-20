@@ -100,7 +100,8 @@ const globalListeners = [
  ***********************/
 const homeListeners = [
     { class: ".story-card:not(:has(.story-card__restricted))", labelName: "Free Article Home" },
-    { class: ".story-card:has(.story-card__restricted)", labelName: "Member Article Home" }
+    { class: ".story-card:has(.story-card__restricted)", labelName: "Member Article Home" },
+    { class: ".logora-debate-card__cta", labelName: "Botón debates" }
 ];
 
 const payWallListeners = [
@@ -232,6 +233,14 @@ function PageType(name, myUrl, interaction, myEvents, isTemplate) {
             return true;
         }
 
+         if (name == 'Autor' && validarParteDeURL(url, "/autor/")) {
+            
+            this.interaction.name = "Autor: " + SalesforceInteractions.cashDom(document.querySelector(".author-bio__name")).text();
+            this.listeners = GenerateListeners(name, myEvents);
+            
+            return true;
+        }   
+
         if (name == 'Tema' && validarParteDeURL(url, "/tema/")) {
             
             this.interaction.name = "Tema: " + SalesforceInteractions.cashDom(document.querySelector(".section-head__title")).text();
@@ -274,6 +283,18 @@ function PageType(name, myUrl, interaction, myEvents, isTemplate) {
             }
             
             match = true;
+        }
+
+        if (name == 'Foros' && validarParteDeURL(url, "/foro/debates/")) {
+            
+            const el = document.querySelector(".bTNdD");
+            
+            if(el){
+                this.interaction.name = "Foros: " + SalesforceInteractions.cashDom(document.querySelector(".bTNdD")).text();
+                this.listeners = GenerateListeners(name, myEvents);
+            }
+            
+            return true;
         }
         
         return match;
@@ -550,13 +571,34 @@ const columnistas = new PageType(
     [], 
     false);
 
+const autor = new PageType(
+    "Autor", 
+    "/autor", 
+    { name: "Autor View" },
+    [], 
+    false);
+
+const foros = new PageType(
+    "Foros", 
+    "/foro/debates", 
+    { name: "Foros View" },
+    [], 
+    false);
+
+const quienEsQuien = new PageType(
+    "Quien es quien", 
+    "/quien-es-quien", 
+    { name: "Quien es quien View" },
+    [], 
+    false);
+
 
 
 /***********************
  * PAGE TYPES ARRAY (FILTRADO)
  ***********************/
 function Pages() {
-     pagesPerso.push(home, homeEspana, payWall, perfil, landingDolar, mercadosOnline, article, cotizaciones, globalData, landingEventosGeneral, logInWall, suscriptionsForm,temas,columnistas,homeMexico,homeColombia,homeUSA, secciones,landingCronistaStudio);
+     pagesPerso.push(home, homeEspana, payWall, perfil, landingDolar, mercadosOnline, article, cotizaciones, globalData, landingEventosGeneral, logInWall, suscriptionsForm,temas,columnistas,homeMexico,homeColombia,homeUSA, secciones,landingCronistaStudio,autor,foros,quienEsQuien);
      return pagesPerso
 }
 
