@@ -224,7 +224,7 @@ function PageType(name, myUrl, interaction, myEvents, isTemplate) {
         }
         
         
-        if (name == 'Evento' && validarParteDeURL(url, "/eventos/")) {
+        if (name == 'Eventos General' && validarParteDeURL(url, "/eventos/")) {
             
             this.interaction.name = "Evento: " + SalesforceInteractions.cashDom(document.querySelector(".event-header__title")).text();
             this.listeners = GenerateListeners(name, myEvents);
