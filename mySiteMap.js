@@ -115,6 +115,10 @@ const articleListeners = [
     { class: ".paywall-chain__inner .swiper-slide:first-child .paywall-card__button", labelName: `${SalesforceInteractions.cashDom(document.querySelector(".paywall-chain__inner .swiper-slide:first-child .paywall-card__title")).text()}`, ItPropagation: false},
     { class: ".paywall-chain__inner .swiper-slide:nth-child(2) .paywall-card__button", labelName: `${SalesforceInteractions.cashDom(document.querySelector(".paywall-chain__inner .swiper-slide:nth-child(2) .paywall-card__title")).text()}`, ItPropagation: false },
     { class: ".paywall-chain__inner .swiper-slide:nth-child(3) .paywall-card__button", labelName: `${SalesforceInteractions.cashDom(document.querySelector(".paywall-chain__inner .swiper-slide:nth-child(3) .paywall-card__title")).text()}`, ItPropagation: false},
+    { class: ".markets-list__item a",
+        labelName: `${SalesforceInteractions.cashDom(document.querySelector(".markets-list__item a")).text()}`,
+        ItPropagation: false
+    },
     {
         class: ".paywall-card__button",
         ItPropagation: false,
@@ -592,13 +596,20 @@ const quienEsQuien = new PageType(
     [], 
     false);
 
+const homeEn = new PageType(
+    "El Cronista en ingles", 
+    "/en", 
+    { name: "El Cronista en ingles View" },
+    [], 
+    false);
+
 
 
 /***********************
  * PAGE TYPES ARRAY (FILTRADO)
  ***********************/
 function Pages() {
-     pagesPerso.push(home, homeEspana, payWall, perfil, landingDolar, mercadosOnline, article, cotizaciones, globalData, landingEventosGeneral, logInWall, suscriptionsForm,temas,columnistas,homeMexico,homeColombia,homeUSA, secciones,landingCronistaStudio,autor,foros,quienEsQuien);
+     pagesPerso.push(home, homeEspana, payWall, perfil, landingDolar, mercadosOnline, article, cotizaciones, globalData, landingEventosGeneral, logInWall, suscriptionsForm,temas,columnistas,homeMexico,homeColombia,homeUSA, secciones,landingCronistaStudio,autor,foros,quienEsQuien,homeEn);
      return pagesPerso
 }
 
