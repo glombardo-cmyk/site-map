@@ -600,7 +600,7 @@ const homeEn = new PageType(
     "El Cronista en ingles", 
     "/en", 
     { name: "El Cronista en ingles View" },
-    [], 
+    homeListeners, 
     false);
 
 
