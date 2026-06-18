@@ -324,6 +324,18 @@ function GenerateListeners(pageType, elements = []) {
 }
 
 /***********************
+ * Validar email
+ ***********************/
+function isValidEmailPerso(email) {
+    if (!email || typeof email !== "string") return false;
+
+    const cleanEmail = email.trim();
+
+    // Validación simple de higiene, no excesivamente restrictiva
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail);
+}
+
+/***********************
  * GLOBAL ACTIONS
  ***********************/
 function GlobalActions(actionEvent) {
@@ -338,21 +350,27 @@ function GlobalActions(actionEvent) {
 
     // Solo enviar atributos e identidad si el usuario está identificado
     if (idUserPerso) {
-        actionEvent.user.identities = {
-            userId: idUserPerso,
-            userIdCms: idUserPerso
-        };
+    actionEvent.user.identities = {
+        userId: idUserPerso,
+        userIdCms: idUserPerso
+    };
+
+        const hasValidEmail = isValidEmailPerso(emailPerso);
+
         actionEvent.user.attributes = {
-            emailAddress: emailPerso,
             name: firstNamePerso,
             lastName: lastNamePerso,
-            isSuscription: getSubscriberStatus(), // lazy evaluation
+            isSuscription: getSubscriberStatus(),
             registrationDate: getRegistrationDate(),
             isAnonymous: false,
-            date: dateTime
+            date: dateTime,
+            hasValidEmailAddress: hasValidEmail
         };
+
+        if (hasValidEmail) {
+            actionEvent.user.attributes.emailAddress = emailPerso.trim();
+        }
     } else {
-        // Usuario anónimo: solo marcar anonimato, sin atributos de identidad
         actionEvent.user.attributes = {
             isAnonymous: true
         };
