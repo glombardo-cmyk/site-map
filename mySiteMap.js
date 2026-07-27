@@ -78,8 +78,8 @@ if (arcUser) {
  * ZONAS GLOBALES
  ***********************/
 const globalZones = [
-    { name: "Header", selector: "#sf-header-zone" },
-    { name: "Footer", selector: "#sf-footer-zone" }
+  { name: "sf_header_zone", selector: "#sf-header-zone" },
+  { name: "sf_footer_zone", selector: "#sf-footer-zone" }
 ];
 
 /***********************
@@ -659,10 +659,11 @@ function observePaywall() {
  * ENTORNO
  ***********************/
 function esURLValida(url) {
-    const match = url.match(/^https:\/\/(dev|qa|qa2|www)\.cronista\.com/i);
-    if (match) {
-        enviromentPerso = match[0];
-    } else if (url.includes("arc-cdn.net")) {
+    const cleanUrl = url.replace(/\/$/, "");
+
+    if (/^https:\/\/(www\.)?cronista\.com/i.test(cleanUrl)) {
+        enviromentPerso = "https://www.cronista.com";
+    } else if (cleanUrl.startsWith("https://elcronista-el-cronista-sandbox.web.arc-cdn.net")) {
         enviromentPerso = "https://elcronista-el-cronista-sandbox.web.arc-cdn.net";
     } else {
         enviromentPerso = "";
