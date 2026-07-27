@@ -200,107 +200,234 @@ function validarParteDeURL(url, parte) {
  ***********************/
 function PageType(name, myUrl, interaction, myEvents, isTemplate) {
     this.name = name;
+
     this.isMatch = () => {
-        let url = window.location.href.split("?")[0].replace(/\/$/, "");
+        const currentUrl = new URL(window.location.href);
+
+        // URL sin query string ni barra final
+        let url = `${currentUrl.origin}${currentUrl.pathname}`
+            .replace(/\/$/, "");
+
+        const outputType =
+            currentUrl.searchParams.get("outputType");
+
         let match = false;
 
         if (isTemplate === true) {
             return true;
         }
 
-        if (myUrl && url === `${enviromentPerso}${myUrl}`) {
+        /*
+         * HOME WEBAPP
+         * Reconoce:
+         * /?outputType=webapp-type
+         */
+        if (
+            name === "Home Webapp" &&
+            currentUrl.pathname === "/" &&
+            outputType === "webapp-type"
+        ) {
+            this.interaction.name = "Home Webapp";
+            this.listeners = GenerateListeners(name, myEvents);
+
+            return true;
+        }
+
+        /*
+         * HOME NORMAL
+         * Reconoce la home solamente cuando NO es webapp.
+         */
+        if (
+            name === "Home" &&
+            url === enviromentPerso &&
+            outputType !== "webapp-type"
+        ) {
+            this.interaction.name = "Home View";
+            this.listeners = GenerateListeners(name, myEvents);
+
+            return true;
+        }
+
+        /*
+         * Evita que la comparación genérica por URL
+         * reconozca ambas homes como la misma página.
+         */
+        if (
+            myUrl &&
+            url === `${enviromentPerso}${myUrl}` &&
+            name !== "Home" &&
+            name !== "Home Webapp"
+        ) {
             match = true;
         }
 
-        if (name == "Suscriptions form" && validarParteDeURL(url, "/suscripciones/plan-") && !validarParteDeURL(url, "/#listo")) {
-            
-            this.interaction.name = "Suscriptions form: " + SalesforceInteractions.cashDom(document.querySelector(".plans-card-v2__title")).text();
+        if (
+            name === "Suscriptions form" &&
+            validarParteDeURL(url, "/suscripciones/plan-") &&
+            !validarParteDeURL(url, "/#listo")
+        ) {
+            this.interaction.name =
+                "Suscriptions form: " +
+                SalesforceInteractions
+                    .cashDom(
+                        document.querySelector(
+                            ".plans-card-v2__title"
+                        )
+                    )
+                    .text();
+
             this.listeners = GenerateListeners(name, myEvents);
-            
+
             return true;
         }
 
-         if (name == "Cronista Studio" && validarParteDeURL(url, "/cronista-studio/")) {
-            
-            this.interaction.name = SalesforceInteractions.cashDom(document.querySelector(".event-header__title")).text();
-            this.listeners = GenerateListeners(name, myEvents);
-            
-            return true;
-        }
-        
-        
-        if (name == 'Eventos General' && validarParteDeURL(url, "/eventos/")) {
-            
-            this.interaction.name = "Evento: " + SalesforceInteractions.cashDom(document.querySelector(".event-header__title")).text();
-            this.listeners = GenerateListeners(name, myEvents);
-            
-            return true;
-        }
+        if (
+            name === "Cronista Studio" &&
+            validarParteDeURL(url, "/cronista-studio/")
+        ) {
+            this.interaction.name =
+                SalesforceInteractions
+                    .cashDom(
+                        document.querySelector(
+                            ".event-header__title"
+                        )
+                    )
+                    .text();
 
-         if (name == 'Autor' && validarParteDeURL(url, "/autor/")) {
-            
-            this.interaction.name = "Autor: " + SalesforceInteractions.cashDom(document.querySelector(".author-bio__name")).text();
             this.listeners = GenerateListeners(name, myEvents);
-            
-            return true;
-        }   
 
-        if (name == 'Tema' && validarParteDeURL(url, "/tema/")) {
-            
-            this.interaction.name = "Tema: " + SalesforceInteractions.cashDom(document.querySelector(".section-head__title")).text();
-            this.listeners = GenerateListeners(name, myEvents);
-            
             return true;
         }
 
-        if (name === "Home" && url === enviromentPerso) {
-            match = true;
+        if (
+            name === "Eventos General" &&
+            validarParteDeURL(url, "/eventos/")
+        ) {
+            this.interaction.name =
+                "Evento: " +
+                SalesforceInteractions
+                    .cashDom(
+                        document.querySelector(
+                            ".event-header__title"
+                        )
+                    )
+                    .text();
+
+            this.listeners = GenerateListeners(name, myEvents);
+
+            return true;
         }
 
-        if (name === "Article" && document.querySelector(".right-rail__main")) {
-            
-            const articleInteraction = buildArticleInteraction();
+        if (
+            name === "Autor" &&
+            validarParteDeURL(url, "/autor/")
+        ) {
+            this.interaction.name =
+                "Autor: " +
+                SalesforceInteractions
+                    .cashDom(
+                        document.querySelector(
+                            ".author-bio__name"
+                        )
+                    )
+                    .text();
+
+            this.listeners = GenerateListeners(name, myEvents);
+
+            return true;
+        }
+
+        if (
+            name === "Tema" &&
+            validarParteDeURL(url, "/tema/")
+        ) {
+            this.interaction.name =
+                "Tema: " +
+                SalesforceInteractions
+                    .cashDom(
+                        document.querySelector(
+                            ".section-head__title"
+                        )
+                    )
+                    .text();
+
+            this.listeners = GenerateListeners(name, myEvents);
+
+            return true;
+        }
+
+        if (
+            name === "Article" &&
+            document.querySelector(".right-rail__main")
+        ) {
+            const articleInteraction =
+                buildArticleInteraction();
 
             if (articleInteraction) {
                 this.interaction = articleInteraction;
             }
+
             observePaywall();
+
             this.listeners = GenerateListeners(name, myEvents);
-            
+
             return true;
         }
 
-         if (name === "Section" && Fusion.globalContent.node_type == 'section') {
-            
-            this.interaction.name = "Section: " +  Fusion.globalContent.name;
+        if (
+            name === "Section" &&
+            window.Fusion?.globalContent?.node_type === "section"
+        ) {
+            this.interaction.name =
+                "Section: " +
+                Fusion.globalContent.name;
+
             this.listeners = GenerateListeners(name, myEvents);
-            
+
             return true;
         }
 
-        if (validarParteDeURL(window.location.href, "MercadosOnline") && !validarParteDeURL(window.location.href, "/MercadosOnline/dolar.html")) {
-            
-            const cotizacionesInteraction = buildCotizacionesInteraction()
-           
-            if(cotizacionesInteraction){
-                this.interaction = cotizacionesInteraction;
+        if (
+            validarParteDeURL(
+                window.location.href,
+                "MercadosOnline"
+            ) &&
+            !validarParteDeURL(
+                window.location.href,
+                "/MercadosOnline/dolar.html"
+            )
+        ) {
+            const cotizacionesInteraction =
+                buildCotizacionesInteraction();
+
+            if (cotizacionesInteraction) {
+                this.interaction =
+                    cotizacionesInteraction;
             }
-            
+
             match = true;
         }
 
-        if (name == 'Foros' && validarParteDeURL(url, "/foro/debates/")) {
-            
+        if (
+            name === "Foros" &&
+            validarParteDeURL(url, "/foro/debates/")
+        ) {
             const el = document.querySelector(".bTNdD");
-            
-            if(el){
-                this.interaction.name = "Foros: " + SalesforceInteractions.cashDom(document.querySelector(".bTNdD")).text();
-                this.listeners = GenerateListeners(name, myEvents);
+
+            if (el) {
+                this.interaction.name =
+                    "Foros: " +
+                    SalesforceInteractions
+                        .cashDom(el)
+                        .text();
+
+                this.listeners =
+                    GenerateListeners(name, myEvents);
             }
-            
+
             return true;
         }
-        
+
         return match;
     };
 
@@ -453,6 +580,14 @@ const home = new PageType(
     "Home",
     "",
     { name: "Home View" },
+    homeListeners,
+    false
+);
+
+const homeWebapp = new PageType(
+    "Home Webapp",
+    "/webapp/",
+    { name: "Home Webapp" },
     homeListeners,
     false
 );
@@ -627,7 +762,7 @@ const homeEn = new PageType(
  * PAGE TYPES ARRAY (FILTRADO)
  ***********************/
 function Pages() {
-     pagesPerso.push(home, homeEspana, payWall, perfil, landingDolar, mercadosOnline, article, cotizaciones, globalData, landingEventosGeneral, logInWall, suscriptionsForm,temas,columnistas,homeMexico,homeColombia,homeUSA, secciones,landingCronistaStudio,autor,foros,quienEsQuien,homeEn);
+     pagesPerso.push(home,homeWebapp, homeEspana, payWall, perfil, landingDolar, mercadosOnline, article, cotizaciones, globalData, landingEventosGeneral, logInWall, suscriptionsForm,temas,columnistas,homeMexico,homeColombia,homeUSA, secciones,landingCronistaStudio,autor,foros,quienEsQuien,homeEn);
      return pagesPerso
 }
 
